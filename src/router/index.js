@@ -4,6 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 const _import = file => () => import('../views/' + file + '.vue')
+
 const routerMap = [
     {
         path: '/',
@@ -15,7 +16,22 @@ const routerMap = [
                 component: _import('Dashboard'),
             },
         ],
-        
+    },
+    {
+        path: 'project',
+        component: _import('Layer'),
+        children: [
+            {
+                path: 'new',
+                name: 'projectNew',
+                component: _import('project/New'),
+            },
+            {
+                path: 'list',
+                name: 'projectList',
+                component: _import('project/List'),
+            },
+        ],
     },
 ]
 
@@ -26,3 +42,5 @@ const router = new Router({
 })
 
 export default router
+
+export const appMenu = routerMap
