@@ -4,6 +4,8 @@ import router from './router'
 import store from './store'
 import AntDesignVue from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
+import './scss/antd.scss'
+import './scss/app.scss'
 
 import Icon from './icons'
 import './icons/style.scss'

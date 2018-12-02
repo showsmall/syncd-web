@@ -11,6 +11,10 @@ import CaretRight from './CaretRight.vue'
 import Square from './Square.vue'
 import MenuFold from './MenuFold.vue'
 import MenuUnfold from './MenuUnfold.vue'
+import CaretDown from './CaretDown.vue'
+import Team from './Team.vue'
+import Logout from './Logout.vue'
+import Question from './Question.vue'
 
 const components = [
     Dashboard,
@@ -24,6 +28,10 @@ const components = [
     Square,
     MenuFold,
     MenuUnfold,
+    CaretDown,
+    Team,
+    Logout,
+    Question,
 ]
 
 const install = function(Vue) {
