@@ -26,6 +26,7 @@ const routerMap = [
     },
     {
         path: '/deploy',
+        name: 'deploy',
         component: _import('Layer'),
         meta: {
             title: '发布',
@@ -60,6 +61,7 @@ const routerMap = [
     },
     {
         path: '/project',
+        name: 'project',
         component: _import('Layer'),
         meta: {
             title: '项目',
@@ -87,6 +89,7 @@ const routerMap = [
     },
     {
         path: '/user',
+        name: 'user',
         component: _import('Layer'),
         meta: {
             title: '用户',
@@ -121,6 +124,7 @@ const routerMap = [
     },
     {
         path: '/server',
+        name: 'server',
         component: _import('Layer'),
         meta: {
             title: '服务器',
@@ -155,6 +159,7 @@ const routerMap = [
     },
     {
         path: '/ops',
+        name: 'ops',
         component: _import('Layer'),
         meta: {
             title: '运维',
@@ -174,6 +179,7 @@ const routerMap = [
     },
     {
         path: '/',
+        name: 'singleSetting',
         component: _import('Layer'),
         meta: {
             single: true,

@@ -28,21 +28,15 @@
         </a-card>
         <a-card class="app-card" title="源码管理" :bordered="false">
             <a-form-item
-                label=' '
-                :colon="false"
+                label='代码仓库地址'
                 :labelCol="formItemLayout.labelCol"
-                :wrapperCol="formItemLayout.wrapperCol">
-                <a-radio-group v-model="repoRadioValue">
-                    <a-radio value="git">git</a-radio>
-                    <a-radio value="svn">svn</a-radio>
-                </a-radio-group>
+                :wrapperCol="formItemLayout.wrapperCol"
+                fieldDecoratorId="repo"
+                help="请输入代码仓库地址，支持git/svn"
+                :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入代码仓库地址' }]}">
+                <a-input placeholder='请输入代码仓库地址' />
             </a-form-item>
-            <template v-if="repoRadioValue == 'git'">
 
-            </template>
-            <template v-else>
-
-            </template>
         </a-card>
         <a-card class="app-card app-form-submit" :bordered="false">
             <a-button type="primary">提交</a-button>

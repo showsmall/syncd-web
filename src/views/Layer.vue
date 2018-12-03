@@ -13,30 +13,25 @@
                 @select="handleMenuSelect"
                 theme="light"
                 mode="inline"
-                :defaultSelectedKeys="['6']"
-                :defaultOpenKeys="['1']"
+                :defaultSelectedKeys="defaultSelectedKeys"
                 :openKeys="openKeys"
                 @openChange="handleOpenChange"
                 class="app-layer-menu">
                 <template v-for="menu in appMenu">
-                    <template v-if="menu.meta.single && menu.children && menu.children.length == 1">
-                        <a-menu-item :key="menu.children[0].name">
-                            <component :is="menu.children[0].meta.icon" />
-                            <span class="app-menu-title">{{ menu.children[0].meta.title }}</span>
+                    <a-menu-item :key="menu.children[0].name" v-if="menu.meta.single && menu.children && menu.children.length == 1">
+                        <component :is="menu.children[0].meta.icon" />
+                        <span class="app-menu-title">{{ menu.children[0].meta.title }}</span>
+                    </a-menu-item>
+                    <a-sub-menu :key="menu.name" v-else>
+                        <span slot="title">
+                            <component :is="menu.meta.icon" />
+                            <span class="app-menu-title">{{ menu.meta.title }}</span>
+                        </span>
+                        <a-menu-item v-for=" childMenu in menu.children" :key="childMenu.name" class="app-menu-title">
+                            <icon-square />
+                            <span class="app-menu-title sub-menu">{{ childMenu.meta.title }}</span>
                         </a-menu-item>
-                    </template>
-                    <template v-else>
-                        <a-sub-menu :key="menu.name">
-                            <span slot="title">
-                                <component :is="menu.meta.icon" />
-                                <span class="app-menu-title">{{ menu.meta.title }}</span>
-                            </span>
-                            <a-menu-item v-for=" childMenu in menu.children" :key="childMenu.name" class="app-menu-title">
-                                <icon-square />
-                                <span class="app-menu-title sub-menu">{{ childMenu.meta.title }}</span>
-                            </a-menu-item>
-                        </a-sub-menu>
-                    </template>
+                    </a-sub-menu>
                 </template>
             </a-menu>
         </a-layout-sider>
@@ -123,6 +118,22 @@ export default {
         appMenu() {
             return routerMap
         },
+        defaultSelectedKeys() {
+            return [this.$route.name]
+        },
+        defaultOpenKeys() {
+            let defOpenKeys = []
+            this.appMenu.forEach(first => {
+                if (first.children && !first.meta.single) {
+                    first.children.forEach(sub => {
+                        if (sub.name == this.$route.name) {
+                            defOpenKeys = [first.name]
+                        }
+                    })
+                }
+            })
+            return defOpenKeys
+        },
     },
     methods: {
         handleCollapsed() {
@@ -165,6 +176,8 @@ export default {
         },
     },
     mounted() {
+        this.handleMenuSelect({key: this.$route.name})
+        this.handleOpenChange(this.defaultOpenKeys)
     },
 }
 </script>
