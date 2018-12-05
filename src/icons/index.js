@@ -15,6 +15,7 @@ import CaretDown from './CaretDown.vue'
 import Team from './Team.vue'
 import Logout from './Logout.vue'
 import Question from './Question.vue'
+import Delete from './Delete.vue'
 
 const components = [
     Dashboard,
@@ -32,6 +33,7 @@ const components = [
     Team,
     Logout,
     Question,
+    Delete,
 ]
 
 const install = function(Vue) {
