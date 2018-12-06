@@ -24,21 +24,24 @@ service.interceptors.response.use(response => {
     if (!res) {
         res = {
             code: -1,
-            message: '网络错误',
+            message: 'Network Error',
         }
     }
     if (res.code != 0) {
-        return Promise.reject(res);
+        Vue.prototype.$message.error(res.message)
+        return Promise.reject(res)
     }
     return res.data;
 }, error => {
     if (!axios.isCancel(error)) {
         let res = {
             code: -1,
-            message: error.message ? error.message : '未知错误',
+            message: error.message ? error.message : 'Unknown Error',
         }
+        Vue.prototype.$message.error(res.message)
+        return Promise.reject(res)
     }
-    return Promise.reject(res)
+    return Promise.reject(error)
 });
 
 export function post(url, data, params, headers) {

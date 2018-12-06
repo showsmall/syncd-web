@@ -1,5 +1,6 @@
 <script>
 import { Form } from 'ant-design-vue'
+import { newProject } from '@/api/project.js'
 
 const NewProject = {
     render() {
@@ -72,6 +73,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '项目名称不能为空' },
                             ],
+                            initialValue: '测试项目',
                         })(
                             <a-input autocomplete="off" placeholder='请输入项目名称' />
                         )}
@@ -83,6 +85,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '项目名称不能为空' },
                             ],
+                            initialValue: '这是项目描述信息',
                         })(
                             <a-textarea placeholder="请输入项目描述信息" rows={3} />
                         )}
@@ -95,6 +98,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '项目空间不能为空' },
                             ],
+                            initialValue: '/home/syncd/project-demo',
                         })(
                             <a-input autocomplete="off" placeholder='请输入项目空间' />
                         )}
@@ -126,6 +130,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择代码仓库类型' },
                             ],
+                            initialValue: 'git',
                         })(
                             <a-radio-group>
                                 <a-radio value='git'>Git</a-radio>
@@ -140,6 +145,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '代码仓库地址不能为空' },
                             ],
+                            initialValue: 'git@github.com:tinystack/syncd.git',
                         })(
                             <a-input autocomplete="off" placeholder='请输入代码仓库地址' />
                         )}
@@ -206,6 +212,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
+                            initialValue: [1],
                         })(
                             <div>
                                 {renderServerGroupList()}
@@ -219,6 +226,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
+                            initialValue: 'work',
                         })(
                             <a-input autocomplete="off" placeholder='目标机部署的用户' />
                         )}
@@ -230,6 +238,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
+                            initialValue: '/tmp',
                         })(
                             <a-input autocomplete="off" placeholder='代码/包部署的目录' />
                         )}
@@ -301,7 +310,11 @@ const NewProject = {
                     }
                     return
                 }
-                //submit values
+                newProject(values).then(res => {
+                    //console.log(res)
+                }).catch(err => {
+                    //console.log(err)
+                })
             })
         },
         handleServerSelect(value) {
