@@ -123,6 +123,43 @@
         margin: 10px 0;
     }
     .oper-delete {
-        //color: 
+        //color:
+    }
+}
+.app-link {
+    cursor: pointer;
+    color: #1890ff;
+    &:hover {
+        color: #40a9ff;
+    }
+}
+.app-color-success {
+    color: #52c41a;
+}
+.app-color-error {
+    color: #f5222d;
+}
+.app-color-info {
+    color: #1890ff;
+}
+.app-color-warning {
+    color: #faad14;
+}
+.app-color-gray {
+    color: #777;
+}
+.app-op {
+    margin-right: 10px;
+    &:last-child {
+        margin-right: 0;
+    }
+    &.app-remove {
+        color: #f5222d;
+        &:hover {
+            color: #cf1322;
+        }
+    }
+    .anticon {
+        margin-right: 3px;
     }
 }

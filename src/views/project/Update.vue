@@ -73,7 +73,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '项目名称不能为空' },
                             ],
-                            initialValue: '测试项目',
+                            initialValue: '',
                         })(
                             <a-input autocomplete="off" placeholder='请输入项目名称' />
                         )}
@@ -85,7 +85,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '项目名称不能为空' },
                             ],
-                            initialValue: '这是项目描述信息',
+                            initialValue: '',
                         })(
                             <a-textarea placeholder="请输入项目描述信息" rows={3} />
                         )}
@@ -98,7 +98,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '项目空间不能为空' },
                             ],
-                            initialValue: '/home/syncd/project-demo',
+                            initialValue: '',
                         })(
                             <a-input autocomplete="off" placeholder='请输入项目空间' />
                         )}
@@ -107,14 +107,20 @@ const NewProject = {
                     {...{ props: formItemLayout }}
                     label='开启审核'
                     help='开启后，上线单需要审核通过后才能发起上线'>
-                        {getFieldDecorator('need_audit')(
+                        {getFieldDecorator('needAudit', {
+                            initialValue: false,
+                            valuePropName: 'checked',
+                        })(
                             <a-switch checkedChildren="开启" unCheckedChildren="关闭"/>
                         )}
                     </a-form-item>
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='项目启用'>
-                        {getFieldDecorator('status')(
+                        {getFieldDecorator('status', {
+                            initialValue: true,
+                            valuePropName: 'checked',
+                        })(
                             <a-switch checkedChildren="启用" unCheckedChildren="停用" defaultChecked />
                         )}
                     </a-form-item>
@@ -145,7 +151,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '代码仓库地址不能为空' },
                             ],
-                            initialValue: 'git@github.com:tinystack/syncd.git',
+                            initialValue: '',
                         })(
                             <a-input autocomplete="off" placeholder='请输入代码仓库地址' />
                         )}
@@ -168,7 +174,9 @@ const NewProject = {
                     {...{ props: formItemLayout }}
                     help="测试环境推荐分支上线，生产环境推荐tag上线"
                     label='上线模式'>
-                        {getFieldDecorator('repoMode')(
+                        {getFieldDecorator('repoMode', {
+                            initialValue: "1",
+                        })(
                             <a-radio-group>
                                 <a-radio value="1">分支上线</a-radio>
                                 <a-radio value="2">tag上线</a-radio>
@@ -212,7 +220,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
-                            initialValue: [1],
+                            initialValue: [],
                         })(
                             <div>
                                 {renderServerGroupList()}
@@ -226,7 +234,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
-                            initialValue: 'work',
+                            initialValue: '',
                         })(
                             <a-input autocomplete="off" placeholder='目标机部署的用户' />
                         )}
@@ -238,7 +246,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
-                            initialValue: '/tmp',
+                            initialValue: '',
                         })(
                             <a-input autocomplete="off" placeholder='代码/包部署的目录' />
                         )}
@@ -304,16 +312,22 @@ const NewProject = {
             e.preventDefault()
             this.form.validateFields((err, values) => {
                 if (err) {
-                    let key = Object.getOwnPropertyNames(err).shift()
-                    if (key && err[key] && err[key].errors && err[key].errors.length) {
-                        this.$message.error(err[key].errors[0].message);
-                    }
+                    this.$root.ResolveFormError(err, values)
                     return
                 }
                 newProject(values).then(res => {
-                    //console.log(res)
-                }).catch(err => {
-                    //console.log(err)
+                    this.$success({
+                        title: '项目添加成功',
+                        content: (
+                            <div>
+                                点击确定，进入项目列表管理已添加项目
+                            </div>
+                        ),
+                        okText: "确定",
+                        onOk: () => {
+                            this.$router.push({name: "projectList"})
+                        }
+                    });
                 })
             })
         },

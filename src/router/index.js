@@ -75,7 +75,17 @@ const routerMap = [
                     title: '新建项目',
                     description: '创建新的上线项目',
                 },
-                component: _import('project/New'),
+                component: _import('project/Update'),
+            },
+            {
+                path: 'edit',
+                name: 'projectEdit',
+                meta: {
+                    title: '编辑项目',
+                    description: '编辑项目信息',
+                    hide: true,
+                },
+                component: _import('project/Update'),
             },
             {
                 path: 'list',

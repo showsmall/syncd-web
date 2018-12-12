@@ -13,7 +13,7 @@
                 @select="handleMenuSelect"
                 theme="light"
                 mode="inline"
-                :defaultSelectedKeys="defaultSelectedKeys"
+                :selectedKeys="selectedKeys"
                 :openKeys="openKeys"
                 @openChange="handleOpenChange"
                 class="app-layer-menu">
@@ -85,8 +85,7 @@
             <a-layout-content class="app-layer-content">
                 <div class="app-layer-content-header">
                     <a-breadcrumb v-if="breadCrumb.length" class="header-breadcrumb">
-                        <a-breadcrumb-item>项目</a-breadcrumb-item>
-                        <a-breadcrumb-item>新建项目</a-breadcrumb-item>
+                        <a-breadcrumb-item v-for="bread in breadCrumb">{{bread}}</a-breadcrumb-item>
                     </a-breadcrumb>
                     <h1 v-if="headerTitle" class="header-title">{{ headerTitle }}</h1>
                     <div v-if="headerTips" class="header-tips">{{ headerTips }}</div>
@@ -106,6 +105,7 @@ export default {
         return {
             collapsed: false,
             openKeys: [],
+            selectedKeys: [],
             userAvatar: 'https://avatars2.githubusercontent.com/u/3644570',
             userName: 'D',
 
@@ -116,10 +116,24 @@ export default {
     },
     computed: {
         appMenu() {
-            return routerMap
-        },
-        defaultSelectedKeys() {
-            return [this.$route.name]
+            let newRouterMap = []
+            routerMap.forEach(first => {
+                let item = {
+                    name: first.name,
+                    meta: first.meta,
+                    children: [],
+                }
+                first.children.forEach(second => {
+                    if (!second.meta.hide || this.$route.name == second.name) {
+                        item.children.push({
+                            name: second.name,
+                            meta: second.meta,
+                        })
+                    }
+                })
+                newRouterMap.push(item)
+            })
+            return newRouterMap
         },
         defaultOpenKeys() {
             let defOpenKeys = []
@@ -135,6 +149,11 @@ export default {
             return defOpenKeys
         },
     },
+    watch: {
+        '$route.name'() {
+            this.initMenuSelectStatus()
+        },
+    },
     methods: {
         handleCollapsed() {
             if (!this.collapsed) {
@@ -147,9 +166,6 @@ export default {
             let headerTitle = ''
             let headerTips = ''
             routerMap.forEach(menu => {
-                if (menu.meta.title) {
-                    breadCrumb.push(menu.meta.title)
-                }
                 menu.children.forEach(sub => {
                     if (sub.name != key) {
                         return
@@ -158,13 +174,16 @@ export default {
                     if (sub.meta.description) {
                         headerTips = sub.meta.description
                     }
+                    if (menu.meta.title) {
+                        breadCrumb.push(menu.meta.title)
+                    }
                     breadCrumb.push(sub.meta.title)
                 })
             })
             this.breadCrumb = breadCrumb
             this.headerTitle = headerTitle
             this.headerTips = headerTips
-
+            this.selectedKeys = [key]
             this.$router.push({name: key})
         },
         handleOpenChange(openKeys) {
@@ -174,10 +193,13 @@ export default {
                 this.openKeys = [openKeys[openKeys.length - 1]]
             }
         },
+        initMenuSelectStatus() {
+            this.handleMenuSelect({key: this.$route.name})
+            this.handleOpenChange(this.defaultOpenKeys)
+        },
     },
     mounted() {
-        this.handleMenuSelect({key: this.$route.name})
-        this.handleOpenChange(this.defaultOpenKeys)
+        this.initMenuSelectStatus()
     },
 }
 </script>

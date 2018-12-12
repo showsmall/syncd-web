@@ -59,7 +59,7 @@ export function post(url, data, params, headers) {
         if (headers && headers['Content-Type'] == 'multipart/form-data') {
             config.data = data
         } else {
-            config.data = qs.stringify(data)
+            config.data = qs.stringify(data, { indices: false })
         }
     }
     if (headers) {

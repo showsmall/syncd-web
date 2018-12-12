@@ -16,6 +16,7 @@ import Team from './Team.vue'
 import Logout from './Logout.vue'
 import Question from './Question.vue'
 import Delete from './Delete.vue'
+import Branch from './Branch.vue'
 
 const components = [
     Dashboard,
@@ -34,6 +35,7 @@ const components = [
     Logout,
     Question,
     Delete,
+    Branch,
 ]
 
 const install = function(Vue) {
