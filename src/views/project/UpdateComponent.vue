@@ -1,6 +1,6 @@
 <script>
 import { Form } from 'ant-design-vue'
-import { newProject } from '@/api/project.js'
+import { updateProjectApi, getProjectApi } from '@/api/project.js'
 
 const NewProject = {
     render() {
@@ -73,7 +73,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '项目名称不能为空' },
                             ],
-                            initialValue: '',
+                            initialValue: this.detail.name,
                         })(
                             <a-input autocomplete="off" placeholder='请输入项目名称' />
                         )}
@@ -85,7 +85,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '项目名称不能为空' },
                             ],
-                            initialValue: '',
+                            initialValue: this.detail.description,
                         })(
                             <a-textarea placeholder="请输入项目描述信息" rows={3} />
                         )}
@@ -98,7 +98,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '项目空间不能为空' },
                             ],
-                            initialValue: '',
+                            initialValue: this.detail.space,
                         })(
                             <a-input autocomplete="off" placeholder='请输入项目空间' />
                         )}
@@ -108,7 +108,7 @@ const NewProject = {
                     label='开启审核'
                     help='开启后，上线单需要审核通过后才能发起上线'>
                         {getFieldDecorator('needAudit', {
-                            initialValue: false,
+                            initialValue: this.detail.need_audit ? true: false,
                             valuePropName: 'checked',
                         })(
                             <a-switch checkedChildren="开启" unCheckedChildren="关闭"/>
@@ -118,7 +118,7 @@ const NewProject = {
                     {...{ props: formItemLayout }}
                     label='项目启用'>
                         {getFieldDecorator('status', {
-                            initialValue: true,
+                            initialValue: this.detail.status ? true : false,
                             valuePropName: 'checked',
                         })(
                             <a-switch checkedChildren="启用" unCheckedChildren="停用" defaultChecked />
@@ -136,7 +136,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择代码仓库类型' },
                             ],
-                            initialValue: 'git',
+                            initialValue: this.detail.repo,
                         })(
                             <a-radio-group>
                                 <a-radio value='git'>Git</a-radio>
@@ -151,7 +151,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '代码仓库地址不能为空' },
                             ],
-                            initialValue: '',
+                            initialValue: this.detail.repo_url,
                         })(
                             <a-input autocomplete="off" placeholder='请输入代码仓库地址' />
                         )}
@@ -159,14 +159,18 @@ const NewProject = {
                     <a-form-item
                     {...{ props: formItemSmallLayout }}
                     label='用户名'>
-                        {getFieldDecorator('repoUser')(
+                        {getFieldDecorator('repoUser', {
+                            initialValue: this.detail.repo_user,
+                        })(
                             <a-input autocomplete="off" placeholder='请输入用户名' />
                         )}
                     </a-form-item>
                     <a-form-item
                     {...{ props: formItemSmallLayout }}
                     label='密码'>
-                        {getFieldDecorator('repoPass')(
+                        {getFieldDecorator('repoPass', {
+                            initialValue: this.detail.repo_pass,
+                        })(
                             <a-input autocomplete="off" placeholder='请输入密码' />
                         )}
                     </a-form-item>
@@ -175,11 +179,11 @@ const NewProject = {
                     help="测试环境推荐分支上线，生产环境推荐tag上线"
                     label='上线模式'>
                         {getFieldDecorator('repoMode', {
-                            initialValue: "1",
+                            initialValue: this.detail.repo_mode,
                         })(
                             <a-radio-group>
-                                <a-radio value="1">分支上线</a-radio>
-                                <a-radio value="2">tag上线</a-radio>
+                                <a-radio value={1}>分支上线</a-radio>
+                                <a-radio value={2}>tag上线</a-radio>
                             </a-radio-group>
                         )}
                     </a-form-item>
@@ -191,7 +195,9 @@ const NewProject = {
                     <a-form-item
                         label='编译/打包脚本'
                         {...{ props: formItemLayout }}>
-                        {getFieldDecorator('buildScript')(
+                        {getFieldDecorator('buildScript', {
+                            initialValue: this.detail.build_script,
+                        })(
                             <div>
                                 <a-textarea autosize={{ minRows: 3, maxRows: 20 }} />
                                 <span>脚本可用变量 <a href="javascript:;">参见>></a></span>
@@ -220,7 +226,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
-                            initialValue: [],
+                            initialValue: this.detail.deploy_server ? this.detail.deploy_server.split(","): [],
                         })(
                             <div>
                                 {renderServerGroupList()}
@@ -234,7 +240,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
-                            initialValue: '',
+                            initialValue: this.detail.deploy_user,
                         })(
                             <a-input autocomplete="off" placeholder='目标机部署的用户' />
                         )}
@@ -246,7 +252,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
-                            initialValue: '',
+                            initialValue: this.detail.deploy_path,
                         })(
                             <a-input autocomplete="off" placeholder='代码/包部署的目录' />
                         )}
@@ -256,7 +262,7 @@ const NewProject = {
                     help='保留最近上线版本数, 回滚使用'
                     label='历史版本保留数'>
                         {getFieldDecorator('deployHistory', {
-                            initialValue: 3,
+                            initialValue: this.detail.deploy_history ? this.detail.deploy_history : 3,
                             rules: [
                                 { required: true, message: '请设置历史版本保留数' },
                             ],
@@ -267,14 +273,18 @@ const NewProject = {
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='pre_deploy'>
-                        {getFieldDecorator('preDeployCmd')(
+                        {getFieldDecorator('preDeployCmd', {
+                            initialValue: this.detail.pre_deploy_cmd
+                        })(
                             <a-input autocomplete="off" placeholder='代码部署之前运行的命令' />
                         )}
                     </a-form-item>
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='post_deploy'>
-                        {getFieldDecorator('postDeployCmd')(
+                        {getFieldDecorator('postDeployCmd', {
+                            initialValue: this.detail.post_deploy_cmd
+                        })(
                             <a-input autocomplete="off" placeholder='代码部署之后运行的命令' />
                         )}
                     </a-form-item>
@@ -305,6 +315,9 @@ const NewProject = {
                     name: '东北机房',
                 },
             ],
+
+            id: 0,
+            detail: {},
         }
     },
     methods: {
@@ -315,7 +328,11 @@ const NewProject = {
                     this.$root.ResolveFormError(err, values)
                     return
                 }
-                newProject(values).then(res => {
+                let postData = {... values}
+                postData.id = this.id
+                postData.status = postData.status ? 1: 0
+                postData.needAudit = postData.needAudit ? 1: 0
+                updateProjectApi(postData).then(res => {
                     this.$success({
                         title: '项目添加成功',
                         content: (
@@ -361,6 +378,17 @@ const NewProject = {
             }
             this.form.setFieldsValue({ deployServer: list})
         },
+        getDataDetail(id) {
+            getProjectApi({id}).then(res => {
+                this.detail = res.detail
+            })
+        },
+    },
+    mounted() {
+        if (this.$route.query.id) {
+            this.id = this.$route.query.id
+            this.getDataDetail(this.$route.query.id)
+        }
     },
 }
 export default Form.create()(NewProject)

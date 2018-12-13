@@ -124,7 +124,7 @@ export default {
                     children: [],
                 }
                 first.children.forEach(second => {
-                    if (!second.meta.hide || this.$route.name == second.name) {
+                    if (!second.meta.hide) {
                         item.children.push({
                             name: second.name,
                             meta: second.meta,
@@ -137,7 +137,7 @@ export default {
         },
         defaultOpenKeys() {
             let defOpenKeys = []
-            this.appMenu.forEach(first => {
+            routerMap.forEach(first => {
                 if (first.children && !first.meta.single) {
                     first.children.forEach(sub => {
                         if (sub.name == this.$route.name) {
@@ -162,6 +162,17 @@ export default {
             this.collapsed = !this.collapsed
         },
         handleMenuSelect({ key }) {
+            this.menuSelect(key)
+            this.gotoMenuRouter(key)
+        },
+        handleOpenChange(openKeys) {
+            if (!openKeys.length) {
+                this.openKeys = []
+            } else {
+                this.openKeys = [openKeys[openKeys.length - 1]]
+            }
+        },
+        menuSelect(key) {
             let breadCrumb = []
             let headerTitle = ''
             let headerTips = ''
@@ -184,17 +195,12 @@ export default {
             this.headerTitle = headerTitle
             this.headerTips = headerTips
             this.selectedKeys = [key]
+        },
+        gotoMenuRouter(key) {
             this.$router.push({name: key})
         },
-        handleOpenChange(openKeys) {
-            if (!openKeys.length) {
-                this.openKeys = []
-            } else {
-                this.openKeys = [openKeys[openKeys.length - 1]]
-            }
-        },
         initMenuSelectStatus() {
-            this.handleMenuSelect({key: this.$route.name})
+            this.menuSelect(this.$route.name)
             this.handleOpenChange(this.defaultOpenKeys)
         },
     },

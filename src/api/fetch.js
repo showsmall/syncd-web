@@ -65,6 +65,13 @@ export function post(url, data, params, headers) {
     if (headers) {
         config.headers = headers
     }
+
+    config.cancelToken = new CancelToken(function(cancel) {
+        Vue.prototype.$CancelAjaxRequet = function() {
+            cancel()
+        }
+    })
+
     return service(config)
 };
 
@@ -72,7 +79,7 @@ export function get(url, params, headers) {
     if (!params) {
         params = {}
     }
-    params._token = Util.LoginToken()
+    //params._token = Util.LoginToken()
     params._t = new Date().getTime()
     let config = {
         method: 'get',

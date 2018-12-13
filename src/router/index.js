@@ -75,17 +75,16 @@ const routerMap = [
                     title: '新建项目',
                     description: '创建新的上线项目',
                 },
-                component: _import('project/Update'),
+                component: _import('project/New'),
             },
             {
                 path: 'edit',
                 name: 'projectEdit',
                 meta: {
                     title: '编辑项目',
-                    description: '编辑项目信息',
                     hide: true,
                 },
-                component: _import('project/Update'),
+                component: _import('project/Edit'),
             },
             {
                 path: 'list',
@@ -142,14 +141,6 @@ const routerMap = [
         },
         children: [
             {
-                path: 'new',
-                name: 'serverNew',
-                meta: {
-                    title: '新增服务器',
-                },
-                component: _import('server/New'),
-            },
-            {
                 path: 'group',
                 name: 'serverGroup',
                 meta: {
@@ -163,7 +154,7 @@ const routerMap = [
                 meta: {
                     title: '服务器列表',
                 },
-                component: _import('server/List'),
+                component: _import('server/Server'),
             },
         ],
     },

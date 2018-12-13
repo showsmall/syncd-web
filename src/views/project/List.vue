@@ -6,10 +6,12 @@
             <a-table
             :columns="tableColumns"
             :dataSource="tableSource"
+            :pagination="pagination"
+            @change="handleTableChange"
             :loading="tableLoading">
                 <template slot="repo_mode" slot-scope="text">
-                    <span v-if="text == 1"><icon-branch />分支</span>
-                    <span v-else><a-icon type="tag" /> Tag</span>
+                    <span v-if="text == 1">分支</span>
+                    <span v-else>Tag</span>
                 </template>
                 <template slot="status" slot-scope="text">
                     <span class="app-color-success" v-if="text == 1"><a-icon type="check-circle" /> 启用</span>
@@ -21,7 +23,7 @@
                 </template>
                 <span slot="op" slot-scope="text, record">
                     <span class="app-link app-op"><a-icon type="eye" />查看</span>
-                    <span @click="$root.GotoRouter('projectEdit')" class="app-link app-op"><a-icon type="edit" />编辑</span>
+                    <span @click="$root.GotoRouter('projectEdit', {id: record.id})" class="app-link app-op"><a-icon type="edit" />编辑</span>
                     <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
                 </span>
             </a-table>
@@ -30,8 +32,10 @@
 </template>
 
 <script>
+import { listProjectApi } from '@/api/project.js'
 export default {
     data () {
+        let pageSize = 10
         return {
             tableColumns: [
                 {dataIndex: "id", title: '项目ID', width: '10%'},
@@ -42,14 +46,36 @@ export default {
                 {dataIndex: "op", title: '操作', width: '20%', align: 'right', scopedSlots: { customRender: 'op' }},
             ],
             tableLoading: false,
-            tableSource: [
-                {id: 1, name: "测试项目", repo_mode: 1, need_audit: 1, status: 1},
-                {id: 1, name: "测试项目", repo_mode: 2, need_audit: 0, status: 0},
-            ],
+            tableSource: [],
+            pagination: {
+                defaultPageSize: pageSize,
+                defaultCurrent: 1,
+                total: 0,
+            },
         }
     },
     methods: {
-
+        handleTableChange(pagination) {
+            let page = pagination.current ? pagination.current: pagination.defaultCurrent
+            this.getDataList({
+                page: page,
+                pageSize: pagination.defaultPageSize,
+            })
+        },
+        getDataList(params) {
+            this.tableLoading = true
+            let offset = (params.page - 1) * params.pageSize
+            listProjectApi({offset: offset, limit: params.pageSize}).then(res => {
+                this.tableLoading = false
+                this.pagination.total = res.total
+                this.tableSource = res.list
+            }).catch(err => {
+                this.tableLoading = false
+            })
+        }
+    },
+    mounted() {
+        this.handleTableChange(this.pagination)
     },
 }
 </script>
