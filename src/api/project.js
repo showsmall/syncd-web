@@ -9,5 +9,5 @@ export function listProjectApi(params) {
 }
 
 export function getProjectApi(params) {
-    return get('/project/get', params)
+    return get('/project/detail', params)
 }

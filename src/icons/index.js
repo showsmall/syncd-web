@@ -17,6 +17,7 @@ import Logout from './Logout.vue'
 import Question from './Question.vue'
 import Delete from './Delete.vue'
 import Branch from './Branch.vue'
+import Verify from './Verify.vue'
 
 const components = [
     Dashboard,
@@ -36,6 +37,7 @@ const components = [
     Question,
     Delete,
     Branch,
+    Verify,
 ]
 
 const install = function(Vue) {

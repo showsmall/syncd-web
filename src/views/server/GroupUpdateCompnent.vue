@@ -7,6 +7,9 @@ const GroupUpdate = {
             labelCol: { span: 6 },
             wrapperCol: { span: 15 },
         }
+        getFieldDecorator('id', {
+            initialValue: this.detail.id,
+        })
         return (
             <a-form>
                 <a-form-item

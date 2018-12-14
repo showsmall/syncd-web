@@ -35,7 +35,6 @@
 import { listProjectApi } from '@/api/project.js'
 export default {
     data () {
-        let pageSize = 10
         return {
             tableColumns: [
                 {dataIndex: "id", title: '项目ID', width: '10%'},
@@ -48,7 +47,7 @@ export default {
             tableLoading: false,
             tableSource: [],
             pagination: {
-                defaultPageSize: pageSize,
+                defaultPageSize: 10,
                 defaultCurrent: 1,
                 total: 0,
             },

@@ -79,9 +79,6 @@
         .app-layer-content-header {
             background: #fff;
             padding: 16px 32px;
-            .header-breadcrumb {
-                margin-bottom: 16px;
-            }
             .header-title {
                 font-size: 20px;
                 font-weight: 500;
@@ -159,7 +156,24 @@
             color: #cf1322;
         }
     }
-    .anticon {
+    .anticon,.hey-icon {
         margin-right: 3px;
+    }
+}
+.app-btn-group {
+    margin-bottom: 15px;
+}
+.app-modal-list {
+    .item {
+        padding: 8px 0;
+        border-bottom: 1px solid #e8e8e8;
+        .op {
+            display: none;
+        }
+        &:hover {
+            .op {
+                display: inline-block;
+            }
+        }
     }
 }

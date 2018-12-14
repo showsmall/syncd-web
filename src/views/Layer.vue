@@ -87,8 +87,6 @@
                     <a-breadcrumb v-if="breadCrumb.length" class="header-breadcrumb">
                         <a-breadcrumb-item v-for="bread in breadCrumb">{{bread}}</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <h1 v-if="headerTitle" class="header-title">{{ headerTitle }}</h1>
-                    <div v-if="headerTips" class="header-tips">{{ headerTips }}</div>
                 </div>
                 <div class="app-layer-content-body">
                     <router-view />
@@ -110,8 +108,6 @@ export default {
             userName: 'D',
 
             breadCrumb: [],
-            headerTitle: '',
-            headerTips: '',
         }
     },
     computed: {
@@ -174,16 +170,10 @@ export default {
         },
         menuSelect(key) {
             let breadCrumb = []
-            let headerTitle = ''
-            let headerTips = ''
             routerMap.forEach(menu => {
                 menu.children.forEach(sub => {
                     if (sub.name != key) {
                         return
-                    }
-                    headerTitle = sub.meta.title
-                    if (sub.meta.description) {
-                        headerTips = sub.meta.description
                     }
                     if (menu.meta.title) {
                         breadCrumb.push(menu.meta.title)
@@ -192,8 +182,6 @@ export default {
                 })
             })
             this.breadCrumb = breadCrumb
-            this.headerTitle = headerTitle
-            this.headerTips = headerTips
             this.selectedKeys = [key]
         },
         gotoMenuRouter(key) {
