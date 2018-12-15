@@ -4,7 +4,27 @@
         class="app-card"
         :bordered="false">
             <div class="app-btn-group">
-                <a-button @click="handleOpenAddServerDialog" type="primary" icon="plus">新增服务器</a-button>
+                <a-row :gutter="10">
+                    <a-col :span="4">
+                        <a-button @click="handleOpenAddServerDialog" type="primary" icon="plus">新增服务器</a-button>
+                    </a-col>
+                    <a-col :span="10"></a-col>
+                    <a-col :span="4">
+                        <a-select
+                        v-model="search.groupId"
+                        allowClear
+                        showSearch
+                        placeholder="搜索指定分组"
+                        notFoundContent="无分组数据"
+                        style="width: 100%"
+                        optionFilterProp="children">
+                            <a-select-option v-for="group in dialogGroupList" :value="group.id">{{ group.name }}</a-select-option>
+                        </a-select>
+                    </a-col>
+                    <a-col :span="6">
+                        <a-input-search v-model="search.keyword" placeholder="关键词搜索，ID、名称、IP" @search="handleSearch" enterButton/>
+                    </a-col>
+                </a-row>
             </div>
             <a-table
             :columns="tableColumns"
@@ -37,14 +57,14 @@
         :destroyOnClose="true"
         @cancel="dialogCancel">
             <a-spin :spinning="dialogLoading">
-                <group-update-compnent :group-list="dialogGroupList" :detail="dialogDetail" ref="groupUpdateRef"></group-update-compnent>
+                <server-update-component :group-list="dialogGroupList" :detail="dialogDetail" ref="groupUpdateRef"></server-update-component>
             </a-spin>
         </a-modal>
     </div>
 </template>
 
 <script>
-import GroupUpdateCompnent from './ServerUpdateCompnent.vue'
+import ServerUpdateComponent from './ServerUpdateComponent.js'
 import { updateServerApi, getServerListApi, getServerDetailApi, deleteServerApi, getGroupListApi } from '@/api/server.js'
 export default {
     data() {
@@ -71,10 +91,15 @@ export default {
             dialogDetail: {},
             dialogGroupList: [],
             dialogLoading: false,
+
+            search: {
+                keyword: '',
+                groupId: undefined,
+            },
         }
     },
     components: {
-        GroupUpdateCompnent,
+        ServerUpdateComponent,
     },
     computed: {
         groupList() {
@@ -86,6 +111,11 @@ export default {
         },
     },
     methods: {
+        handleSearch(value) {
+            this.search.keyword = value
+            this.pagination.current = 1
+            this.handleTableChange(this.pagination)
+        },
         handleTableChange(pagination) {
             this.pagination.current = pagination.current
             this.getDataList({
@@ -143,7 +173,9 @@ export default {
         getDataList(params) {
             this.tableLoading = true
             let offset = (params.page - 1) * params.pageSize
-            getServerListApi({offset: offset, limit: params.pageSize}).then(res => {
+            let groupId = this.search.groupId ? this.search.groupId: 0
+            let keyword = this.search.keyword
+            getServerListApi({group_id: groupId, keyword: keyword, offset: offset, limit: params.pageSize}).then(res => {
                 this.tableLoading = false
                 this.pagination.total = res.total
                 this.tableSource = res.list
@@ -158,12 +190,16 @@ export default {
         },
     },
     mounted() {
-        this.handleTableChange(this.pagination)
         this.getDataGroupList()
         if (this.$route.query.op == 'edit') {
             if (this.$route.query.id) {
                 this.handleOpenEditServerDialog(this.$route.query.id)
+                this.handleSearch(this.$route.query.id)
+            } else {
+                this.handleTableChange(this.pagination)
             }
+        } else {
+            this.handleTableChange(this.pagination)
         }
     },
 }

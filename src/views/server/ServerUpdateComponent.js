@@ -1,4 +1,3 @@
-<script>
 import { Form } from 'ant-design-vue'
 const GroupUpdate = {
     render() {
@@ -115,4 +114,3 @@ const GroupUpdate = {
     },
 }
 export default Form.create()(GroupUpdate)
-</script>

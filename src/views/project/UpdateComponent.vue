@@ -1,10 +1,10 @@
 <script>
 import { Form } from 'ant-design-vue'
 import { updateProjectApi, getProjectApi } from '@/api/project.js'
-
+import { getGroupListApi } from '@/api/server.js'
 const NewProject = {
     render() {
-        const { getFieldDecorator, getFieldValue } = this.form
+        const { getFieldDecorator, getFieldValue, setFieldsValue } = this.form
         const formItemLayout = {
             labelCol: { span: 4 },
             wrapperCol: { span: 14 },
@@ -26,11 +26,14 @@ const NewProject = {
             let srvList = getFieldValue('deployServer')
             let renderList = []
             if (srvList) {
-                srvList.forEach(srv => {
+                srvList.forEach((srv, index) => {
                     let server = this.findServerItem(srv)
+                    if (!server.id) {
+                        return
+                    }
                     renderList.push(
                         <div class="ant-list-item">
-                            <div class="ant-list-item-content ant-list-item-content-single">{server.name}</div>
+                            <div class="ant-list-item-content ant-list-item-content-single">{index + 1}. {server.name} (ID:{server.id})</div>
                             <ul class="ant-list-item-action">
                                 <li>
                                     <a onClick={this.removeServerItem.bind(this, srv)} class="oper-delete"><icon-delete />移除</a>
@@ -40,6 +43,7 @@ const NewProject = {
                     )
                 })
             }
+
             let renderTpl = ''
             if (renderList.length) {
                 renderTpl = (
@@ -47,7 +51,7 @@ const NewProject = {
                         <div class="title">已选集群列表</div>
                         <div class="ant-list ant-list-split ant-list-bordered">
                             <div class="ant-spin-nested-loading">
-                                <div class="ant-spin-container">
+                                <div class="ant-spin-container" style="max-height: 200px; overflow-y: auto;">
                                     {renderList}
                                 </div>
                             </div>
@@ -297,27 +301,9 @@ const NewProject = {
     },
     data () {
         return {
-            serverGroupList: [
-                {
-                    id: 1,
-                    name: '线上Mirror机房',
-                },
-                {
-                    id: 2,
-                    name: '华北机房',
-                },
-                {
-                    id: 3,
-                    name: '华东机房',
-                },
-                {
-                    id: 4,
-                    name: '东北机房',
-                },
-            ],
-
             id: 0,
             detail: {},
+            serverGroupList: [],
         }
     },
     methods: {
@@ -332,9 +318,10 @@ const NewProject = {
                 postData.id = this.id
                 postData.status = postData.status ? 1: 0
                 postData.needAudit = postData.needAudit ? 1: 0
+                postData.deployServer = this.filterInvalidServerGroup(postData.deployServer)
                 updateProjectApi(postData).then(res => {
                     this.$success({
-                        title: '项目添加成功',
+                        title: this.detail.id ? '项目更新成功': '项目添加成功',
                         content: (
                             <div>
                                 点击确定，进入项目列表管理已添加项目
@@ -353,7 +340,7 @@ const NewProject = {
             if (!list) {
                 list = []
             }
-            if (list.indexOf(value) == -1) {
+            if (list.indexOf(value.toString()) == -1) {
                 list.push(value)
             }
             this.form.setFieldsValue({ deployServer: list})
@@ -378,9 +365,25 @@ const NewProject = {
             }
             this.form.setFieldsValue({ deployServer: list})
         },
+        filterInvalidServerGroup(groupList) {
+            let newGroupList = []
+            if (groupList) {
+                groupList.forEach(id => {
+                    if (this.findServerItem(id).id) {
+                        newGroupList.push(id)
+                    }
+                })
+            }
+            return newGroupList
+        },
         getDataDetail(id) {
             getProjectApi({id}).then(res => {
                 this.detail = res.detail
+            })
+        },
+        getDataGroupList() {
+            getGroupListApi({offset: 0, limit: 9999}).then(res => {
+                this.serverGroupList = res.list
             })
         },
     },
@@ -389,6 +392,7 @@ const NewProject = {
             this.id = this.$route.query.id
             this.getDataDetail(this.$route.query.id)
         }
+        this.getDataGroupList()
     },
 }
 export default Form.create()(NewProject)

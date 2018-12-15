@@ -106,18 +106,10 @@ const routerMap = [
         },
         children: [
             {
-                path: 'new',
-                name: 'userNew',
-                meta: {
-                    title: '添加用户',
-                },
-                component: _import('user/New'),
-            },
-            {
                 path: 'list',
                 name: 'userList',
                 meta: {
-                    title: '用户列表',
+                    title: '用户管理',
                 },
                 component: _import('user/List'),
             },

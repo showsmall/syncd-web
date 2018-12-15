@@ -4,7 +4,15 @@
         class="app-card"
         :bordered="false">
             <div class="app-btn-group">
-                <a-button @click="handleOpenAddGroupDialog" type="primary" icon="plus">新增分组</a-button>
+                <a-row :gutter="10">
+                    <a-col :span="4">
+                        <a-button @click="handleOpenAddGroupDialog" type="primary" icon="plus">新增分组</a-button>
+                    </a-col>
+                    <a-col :span="14"></a-col>
+                    <a-col :span="6">
+                        <a-input-search v-model="search.keyword" placeholder="关键词搜索，ID、名称" @search="handleSearch" enterButton/>
+                    </a-col>
+                </a-row>
             </div>
             <a-table
             :columns="tableColumns"
@@ -33,14 +41,14 @@
         :destroyOnClose="true"
         @cancel="dialogCancel">
             <a-spin :spinning="dialogLoading">
-                <group-update-compnent :detail="dialogDetail" ref="groupUpdateRef"></group-update-compnent>
+                <group-update-component :detail="dialogDetail" ref="groupUpdateRef"></group-update-component>
             </a-spin>
         </a-modal>
     </div>
 </template>
 
 <script>
-import GroupUpdateCompnent from './GroupUpdateCompnent.vue'
+import GroupUpdateComponent from './GroupUpdateComponent.js'
 import { updateGroupApi, getGroupListApi, getGroupDetailApi, deleteGroupApi, getServerMultiApi } from '@/api/server.js'
 export default {
     data() {
@@ -63,12 +71,19 @@ export default {
             dialogConfirmLoading: false,
             dialogDetail: {},
             dialogLoading: false,
+
+            search: {},
         }
     },
     components: {
-        GroupUpdateCompnent,
+        GroupUpdateComponent,
     },
     methods: {
+        handleSearch(value) {
+            this.search.keyword = value
+            this.pagination.current = 1
+            this.handleTableChange(this.pagination)
+        },
         handleTableChange(pagination) {
             this.pagination.current = pagination.current
             this.getDataList({
@@ -154,7 +169,7 @@ export default {
         getDataList(params) {
             this.tableLoading = true
             let offset = (params.page - 1) * params.pageSize
-            getGroupListApi({offset: offset, limit: params.pageSize}).then(res => {
+            getGroupListApi({keyword: this.search.keyword, offset: offset, limit: params.pageSize}).then(res => {
                 this.tableLoading = false
                 this.pagination.total = res.total
                 this.tableSource = res.list
