@@ -177,3 +177,17 @@
         }
     }
 }
+.app-check-box {
+    .ant-checkbox-group {
+        width: 100%;
+        .item {
+            padding: 8px 0;
+            border-top: 1px solid #eaeaea;
+
+            .ant-checkbox-wrapper {
+                margin: 0 18px 10px 0;
+                min-width: 140px;
+            }
+        }
+    }
+}

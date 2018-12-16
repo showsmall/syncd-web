@@ -6,7 +6,7 @@
             <div class="app-btn-group">
                 <a-row :gutter="10">
                     <a-col :span="4">
-                        <a-button @click="handleOpenAddGroupDialog" type="primary" icon="plus">新增用户组</a-button>
+                        <a-button @click="handleOpenAddDialog" type="primary" icon="plus">新增用户组</a-button>
                     </a-col>
                     <a-col :span="14"></a-col>
                     <a-col :span="6">
@@ -14,7 +14,26 @@
                     </a-col>
                 </a-row>
             </div>
+            <a-table
+            :columns="tableColumns"
+            :dataSource="tableSource"
+            :pagination="pagination"
+            @change="handleTableChange"
+            :loading="tableLoading">
+                <template slot="group_id" slot-scope="text, record">
+                    <span v-if="groupList[text]">{{ groupList[text].name }}</span>
+                    <span v-else>{{ text }}</span>
+                </template>
+                <span slot="op" slot-scope="text, record">
+                    <span @click="handleShowGroupPrivList(record.id)" class="app-link app-op"><a-icon type="lock" />查看权限</span>
+                    <span  @click="handleOpenEditDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
+                    <a-popconfirm title="确定要删除此服务器吗？" @confirm="handleDeleteServer(record.id)" okText="删除" cancelText="取消">
+                        <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
+                    </a-popconfirm>
+                </span>
+            </a-table>
         </a-card>
+
         <a-modal
         :title="dialogTitle"
         :visible="dialogVisible"
@@ -24,6 +43,7 @@
         :maskClosable="false"
         okText="确定"
         cancelText="取消"
+        width="55vw"
         :destroyOnClose="true"
         @cancel="dialogCancel">
             <a-spin :spinning="dialogLoading">
@@ -34,11 +54,24 @@
 </template>
 
 <script>
+import { updateGroupApi, getGroupListApi, getGroupDetailApi } from '@/api/user.js'
 import GroupUpdateComponent from './GroupUpdateComponent.js'
 export default {
     data () {
         return {
             search: {},
+            tableColumns: [
+                {dataIndex: "id", title: 'ID', width: '10%'},
+                {dataIndex: "name", title: '名称'},
+                {dataIndex: "op", title: '操作', width: '30%', align: 'right', scopedSlots: { customRender: 'op' }},
+            ],
+            tableSource: [],
+            pagination: {
+                pageSize: 10,
+                current: 1,
+                total: 0,
+            },
+            tableLoading: false,
 
             dialogTitle: '',
             dialogVisible: false,
@@ -51,20 +84,100 @@ export default {
         GroupUpdateComponent,
     },
     methods: {
-        handleOpenAddGroupDialog() {
+        handleTableChange(pagination) {
+            this.pagination.current = pagination.current
+            this.getDataList({
+                page: pagination.current,
+                pageSize: pagination.pageSize,
+            })
+        },
+        handleOpenAddDialog() {
             this.dialogTitle = '新增用户组'
             this.dialogVisible = true
             this.dialogDetail = {}
         },
+        handleOpenEditDialog(id) {
+            this.dialogTitle = '编辑服务器信息'
+            this.dialogVisible = true
+            this.dialogDetail = {}
+            this.getDataDetail(id)
+        },
         handleSearch(value) {
-
+            this.search.keyword = value
+            this.pagination.current = 1
+            this.handleTableChange(this.pagination)
         },
         dialogSubmit() {
-
+            this.$refs.groupUpdateRef.validateFields((err, values) => {
+                if (err) {
+                    return
+                }
+                this.dialogConfirmLoading = true
+                updateGroupApi(values).then(res => {
+                    let msg = this.dialogDetail.id ? '用户组信息更新成功': '用户组信息创建成功'
+                    this.$message.success(msg, 1, () => {
+                        this.dialogCancel()
+                        this.dialogConfirmLoading = false
+                        this.handleTableChange(this.pagination)
+                    })
+                }).catch(err => {
+                    this.dialogConfirmLoading = false
+                })
+            })
         },
         dialogCancel() {
             this.dialogVisible = false
         },
+        handleShowGroupPrivList(id) {
+            /*
+            let renderServerList = []
+            serverList.forEach(s => {
+                let link = '/server/list?op=edit&id=' + s.id
+                renderServerList.push(
+                    <div class="item">
+                    <span style="display:inline-block; width: 50%">
+                        <icon-server /> {s.ip}:[{s.ssh_port}] <a class="op" target="_blank" href={link}>编辑</a>
+                    </span>
+                    <span style="display:inline-block; width: 50%">{s.name}</span></div>
+                )
+            })
+            if (renderServerList.length == 0) {
+                renderServerList = (
+                    <div>暂无服务器</div>
+                )
+            }
+            this.$info({
+                title: '服务器列表',
+                width: "50vw",
+                content: (
+                    <div class="app-modal-list">{renderServerList}</div>
+                ),
+            })*/
+        },
+        getDataList(params) {
+            this.tableLoading = true
+            let offset = (params.page - 1) * params.pageSize
+            let keyword = this.search.keyword
+            getGroupListApi({keyword: keyword, offset: offset, limit: params.pageSize}).then(res => {
+                this.tableLoading = false
+                this.pagination.total = res.total
+                this.tableSource = res.list
+            }).catch(err => {
+                this.tableLoading = false
+            })
+        },
+        getDataDetail(id) {
+            this.dialogLoading = true
+            getGroupDetailApi({id}).then(res => {
+                this.dialogLoading = false
+                this.dialogDetail = res
+            }).catch( err => {
+                this.dialogLoading = false
+            })
+        },
+    },
+    mounted() {
+        this.handleTableChange(this.pagination)
     },
 }
 </script>
