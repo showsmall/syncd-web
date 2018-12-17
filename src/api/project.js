@@ -11,3 +11,7 @@ export function listProjectApi(params) {
 export function getProjectApi(params) {
     return get('/project/detail', params)
 }
+
+export function deleteProjectApi(params) {
+    return post('/project/delete', params)
+}

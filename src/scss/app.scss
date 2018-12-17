@@ -143,7 +143,7 @@
     color: #faad14;
 }
 .app-color-gray {
-    color: #777;
+    color: #999;
 }
 .app-op {
     margin-right: 10px;
@@ -155,6 +155,9 @@
         &:hover {
             color: #cf1322;
         }
+    }
+    &.app-no-allow {
+        cursor: not-allowed;
     }
     .anticon,.hey-icon {
         margin-right: 3px;

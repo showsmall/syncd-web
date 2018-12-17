@@ -165,7 +165,7 @@ export default {
             this.dialogLoading = true
             getServerDetailApi({id}).then(res => {
                 this.dialogLoading = false
-                this.dialogDetail = res.detail
+                this.dialogDetail = res
             }).catch( err => {
                 this.dialogLoading = false
             })
@@ -191,13 +191,11 @@ export default {
     },
     mounted() {
         this.getDataGroupList()
-        if (this.$route.query.op == 'edit') {
-            if (this.$route.query.id) {
-                this.handleOpenEditServerDialog(this.$route.query.id)
-                this.handleSearch(this.$route.query.id)
-            } else {
-                this.handleTableChange(this.pagination)
-            }
+        let op = this.$route.query.op
+        let id = this.$route.query.id
+        if (op == 'edit' && id > 0) {
+            this.handleOpenEditServerDialog(id)
+            this.handleSearch(id)
         } else {
             this.handleTableChange(this.pagination)
         }

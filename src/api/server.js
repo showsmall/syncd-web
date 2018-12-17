@@ -8,6 +8,10 @@ export function getGroupListApi(params) {
     return get('/server/group/list', params)
 }
 
+export function getGroupMultiApi(params) {
+    return get('/server/group/multi', params)
+}
+
 export function getGroupDetailApi(params) {
     return get('/server/group/detail', params)
 }
@@ -30,8 +34,4 @@ export function getServerDetailApi(params) {
 
 export function deleteServerApi(data) {
     return post('/server/delete', data)
-}
-
-export function getServerMultiApi(params) {
-    return get('/server/multi', params)
 }

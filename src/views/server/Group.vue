@@ -25,7 +25,7 @@
                     <span @click="handleOpenEditGroupDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
                     <a-popconfirm title="确定要删除此分组吗？" @confirm="handleDeleteGroup(record.id)" okText="删除" cancelText="取消">
                         <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
-                </a-popconfirm>
+                    </a-popconfirm>
                 </span>
             </a-table>
         </a-card>
@@ -49,7 +49,7 @@
 
 <script>
 import GroupUpdateComponent from './GroupUpdateComponent.js'
-import { updateGroupApi, getGroupListApi, getGroupDetailApi, deleteGroupApi, getServerMultiApi } from '@/api/server.js'
+import { updateGroupApi, getGroupListApi, getGroupDetailApi, deleteGroupApi, getServerListApi } from '@/api/server.js'
 export default {
     data() {
         return {
@@ -72,7 +72,9 @@ export default {
             dialogDetail: {},
             dialogLoading: false,
 
-            search: {},
+            search: {
+                keyword: '',
+            },
         }
     },
     components: {
@@ -109,7 +111,7 @@ export default {
             })
         },
         handleShowServerList(id) {
-            getServerMultiApi({group_id: id}).then(res => {
+            getServerListApi({group_id: id}).then(res => {
                 let serverList = res.list ? res.list: []
                 let renderServerList = []
                 serverList.forEach(s => {
@@ -161,7 +163,7 @@ export default {
             this.dialogLoading = true
             getGroupDetailApi({id}).then(res => {
                 this.dialogLoading = false
-                this.dialogDetail = res.detail
+                this.dialogDetail = res
             }).catch( err => {
                 this.dialogLoading = false
             })
@@ -179,7 +181,14 @@ export default {
         },
     },
     mounted() {
-        this.handleTableChange(this.pagination)
+        let op = this.$route.query.op
+        let id = this.$route.query.id
+        if (op == 'view' && id > 0) {
+            this.handleSearch(id)
+            this.handleShowServerList(id)
+        } else {
+            this.handleTableChange(this.pagination)
+        }
     },
 }
 </script>

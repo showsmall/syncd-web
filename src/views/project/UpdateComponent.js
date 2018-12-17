@@ -1,4 +1,3 @@
-<script>
 import { Form } from 'ant-design-vue'
 import { updateProjectApi, getProjectApi } from '@/api/project.js'
 import { getGroupListApi } from '@/api/server.js'
@@ -66,6 +65,7 @@ const NewProject = {
 
         return (
             <a-form onSubmit={this.handleSubmit}>
+                <a-spin spinning={this.detailLoading}>
                 <a-card
                 class="app-card"
                 title="项目基本信息"
@@ -175,7 +175,7 @@ const NewProject = {
                         {getFieldDecorator('repoPass', {
                             initialValue: this.detail.repo_pass,
                         })(
-                            <a-input autocomplete="off" placeholder='请输入密码' />
+                            <a-input type="password" autocomplete="off" placeholder='请输入密码' />
                         )}
                     </a-form-item>
                     <a-form-item
@@ -183,7 +183,10 @@ const NewProject = {
                     help="测试环境推荐分支上线，生产环境推荐tag上线"
                     label='上线模式'>
                         {getFieldDecorator('repoMode', {
-                            initialValue: this.detail.repo_mode,
+                            rules: [
+                                { required: true, message: '请选择上线模式' },
+                            ],
+                            initialValue: this.detail.repo_mode ? this.detail.repo_mode : 1,
                         })(
                             <a-radio-group>
                                 <a-radio value={1}>分支上线</a-radio>
@@ -230,7 +233,7 @@ const NewProject = {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
-                            initialValue: this.detail.deploy_server ? this.detail.deploy_server.split(","): [],
+                            initialValue: this.detail.deploy_server ? this.detail.deploy_server: [],
                         })(
                             <div>
                                 {renderServerGroupList()}
@@ -296,6 +299,7 @@ const NewProject = {
                 <a-card class="app-card app-form-submit" bordered={false}>
                     <a-button type="primary" htmlType='submit'>提交</a-button>
                 </a-card>
+                </a-spin>
             </a-form>
         )
     },
@@ -304,6 +308,7 @@ const NewProject = {
             id: 0,
             detail: {},
             serverGroupList: [],
+            detailLoading: false,
         }
     },
     methods: {
@@ -340,7 +345,7 @@ const NewProject = {
             if (!list) {
                 list = []
             }
-            if (list.indexOf(value.toString()) == -1) {
+            if (list.indexOf(value) == -1) {
                 list.push(value)
             }
             this.form.setFieldsValue({ deployServer: list})
@@ -377,8 +382,10 @@ const NewProject = {
             return newGroupList
         },
         getDataDetail(id) {
+            this.detailLoading = true
             getProjectApi({id}).then(res => {
-                this.detail = res.detail
+                this.detail = res
+                this.detailLoading = false
             })
         },
         getDataGroupList() {
@@ -396,4 +403,3 @@ const NewProject = {
     },
 }
 export default Form.create()(NewProject)
-</script>
