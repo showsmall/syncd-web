@@ -1,3 +1,4 @@
+import moment from 'moment'
 
 export default {
 
@@ -17,4 +18,17 @@ export default {
         }
     },
 
+    FormatDateTime(unixtime, format) {
+        if (!format) {
+            format = 'YYYY-MM-DD HH:mm:SS'
+        }
+        return moment.unix(unixtime).format(format)
+    },
+
+    FormatDateFromNow(unixtime) {
+        if (!unixtime) {
+            return '--'
+        }
+        return moment.unix(unixtime).fromNow()
+    },
 }
