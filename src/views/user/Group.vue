@@ -20,12 +20,7 @@
             :pagination="pagination"
             @change="handleTableChange"
             :loading="tableLoading">
-                <template slot="group_id" slot-scope="text, record">
-                    <span v-if="groupList[text]">{{ groupList[text].name }}</span>
-                    <span v-else>{{ text }}</span>
-                </template>
                 <span slot="op" slot-scope="text, record">
-                    <span @click="handleShowGroupPrivList(record.id)" class="app-link app-op"><a-icon type="lock" />查看权限</span>
                     <span  @click="handleOpenEditDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
                     <a-popconfirm title="确定要删除此服务器吗？" @confirm="handleDeleteServer(record.id)" okText="删除" cancelText="取消">
                         <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
@@ -47,7 +42,7 @@
         :destroyOnClose="true"
         @cancel="dialogCancel">
             <a-spin :spinning="dialogLoading">
-                <group-update-component :detail="dialogDetail" ref="groupUpdateRef"></group-update-component>
+                <group-update-component :detail="dialogDetail" ref="updateRef"></group-update-component>
             </a-spin>
         </a-modal>
     </div>
@@ -108,7 +103,7 @@ export default {
             this.handleTableChange(this.pagination)
         },
         dialogSubmit() {
-            this.$refs.groupUpdateRef.validateFields((err, values) => {
+            this.$refs.updateRef.validateFields((err, values) => {
                 if (err) {
                     return
                 }
@@ -127,32 +122,6 @@ export default {
         },
         dialogCancel() {
             this.dialogVisible = false
-        },
-        handleShowGroupPrivList(id) {
-            /*
-            let renderServerList = []
-            serverList.forEach(s => {
-                let link = '/server/list?op=edit&id=' + s.id
-                renderServerList.push(
-                    <div class="item">
-                    <span style="display:inline-block; width: 50%">
-                        <icon-server /> {s.ip}:[{s.ssh_port}] <a class="op" target="_blank" href={link}>编辑</a>
-                    </span>
-                    <span style="display:inline-block; width: 50%">{s.name}</span></div>
-                )
-            })
-            if (renderServerList.length == 0) {
-                renderServerList = (
-                    <div>暂无服务器</div>
-                )
-            }
-            this.$info({
-                title: '服务器列表',
-                width: "50vw",
-                content: (
-                    <div class="app-modal-list">{renderServerList}</div>
-                ),
-            })*/
         },
         getDataList(params) {
             this.tableLoading = true

@@ -15,3 +15,11 @@ export function getGroupDetailApi(params) {
 export function getPrivListApi() {
     return get('/user/priv/list')
 }
+
+export function updateUserApi(data) {
+    return post('/user/update', data)
+}
+
+export function getUserListApi(params) {
+    return get('/user/list', params)
+}

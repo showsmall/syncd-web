@@ -111,7 +111,7 @@ const routerMap = [
                 meta: {
                     title: '用户管理',
                 },
-                component: _import('user/List'),
+                component: _import('user/User'),
             },
             {
                 path: 'group',
