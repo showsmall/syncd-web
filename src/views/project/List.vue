@@ -194,6 +194,7 @@ export default {
         handleDeleteProject(id) {
             deleteProjectApi({id}).then(res => {
                 this.$message.success('删除成功', 1)
+                this.$root.ResetPagination(this.pagination)
                 this.handleTableChange(this.pagination)
             })
         },

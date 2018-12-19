@@ -1,5 +1,5 @@
 import moment from 'moment'
-
+import md5 from 'blueimp-md5'
 export default {
 
     GotoRouter(name, query) {
@@ -30,5 +30,20 @@ export default {
             return '--'
         }
         return moment.unix(unixtime).fromNow()
+    },
+
+    Md5Sum(str) {
+        return md5(str);
+    },
+
+    ResetPagination(pagination, adjustNum) {
+        if (!adjustNum) {
+            adjustNum = -1
+        }
+        pagination.total += adjustNum
+        let maxPage = Math.ceil(pagination.total/pagination.pageSize)
+        if (pagination.current > maxPage) {
+            pagination.current = maxPage
+        }
     },
 }

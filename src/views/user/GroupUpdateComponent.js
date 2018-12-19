@@ -117,7 +117,6 @@ const GroupUpdate = {
             })
             this.checkPrivAll = allChecked
             this.indeterminate = false
-            console.log(checkList)
             if (checkList.length > 0 && !allChecked) {
                 this.indeterminate = true
             }

@@ -12,6 +12,10 @@ export function getGroupDetailApi(params) {
     return get('/user/group/detail', params)
 }
 
+export function deleteGroupApi(data) {
+    return post('/user/group/delete', data)
+}
+
 export function getPrivListApi() {
     return get('/user/priv/list')
 }
@@ -22,4 +26,16 @@ export function updateUserApi(data) {
 
 export function getUserListApi(params) {
     return get('/user/list', params)
+}
+
+export function getUserDetailApi(params) {
+    return get('/user/detail', params)
+}
+
+export function checkUserExistsApi(params) {
+    return get('/user/exists', params)
+}
+
+export function deleteUserApi(data) {
+    return post('/user/delete', data)
 }

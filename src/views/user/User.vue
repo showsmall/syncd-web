@@ -23,9 +23,27 @@
                 <span slot="last_login_time" slot-scope="text, record">
                     {{$root.FormatDateFromNow(text)}}
                 </span>
+                <span slot="lock_status" slot-scope="text, record">
+                    <template v-if="text == 1">
+                        <a-tooltip placement="top" >
+                            <template slot="title">
+                                <span>用户可正常登陆</span>
+                            </template>
+                            <span class="app-color-success"><a-icon type="unlock" /> 正常</span>
+                        </a-tooltip>
+                    </template>
+                    <template v-if="text == 0">
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                                <span>用户被锁定，禁止登录</span>
+                            </template>
+                            <span class="app-color-gray"><a-icon type="lock" /> 锁定</span>
+                        </a-tooltip>
+                    </template>
+                </span>
                 <span slot="op" slot-scope="text, record">
                     <span  @click="handleOpenEditDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
-                    <a-popconfirm title="确定要删除此服务器吗？" @confirm="handleDeleteServer(record.id)" okText="删除" cancelText="取消">
+                    <a-popconfirm title="确定要删除此用户吗？" @confirm="handleDeleteUser(record.id)" okText="删除" cancelText="取消">
                         <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
                     </a-popconfirm>
                 </span>
@@ -51,7 +69,7 @@
 </template>
 
 <script>
-import { updateUserApi, getUserListApi } from '@/api/user.js'
+import { updateUserApi, getUserListApi, getUserDetailApi, deleteUserApi } from '@/api/user.js'
 import UserUpdateComponent from './UserUpdateComponent.js'
 export default {
     data () {
@@ -60,7 +78,8 @@ export default {
             tableColumns: [
                 {dataIndex: "id", title: 'ID', width: '10%'},
                 {dataIndex: "name", title: '用户名'},
-                {dataIndex: "group", title: '用户组', width: '15%'},
+                {dataIndex: "group_name", title: '用户组', width: '15%'},
+                {dataIndex: "lock_status", title: '状态', scopedSlots: { customRender: 'lock_status' }},
                 {dataIndex: "last_login_time", title: '上次登录时间', width: '15%', scopedSlots: { customRender: 'last_login_time' }},
                 {dataIndex: "last_login_ip", title: '上次登录IP', width: '15%'},
                 {dataIndex: "op", title: '操作', width: '15%', align: 'right', scopedSlots: { customRender: 'op' }},
@@ -72,6 +91,7 @@ export default {
                 total: 0,
             },
             tableLoading: false,
+            userGroupList: {},
 
             dialogTitle: '',
             dialogVisible: false,
@@ -107,12 +127,23 @@ export default {
             this.pagination.current = 1
             this.handleTableChange(this.pagination)
         },
+        handleDeleteUser(id) {
+            deleteUserApi({id}).then(res => {
+                this.$message.success('删除成功', 1)
+                this.$root.ResetPagination(this.pagination)
+                this.handleTableChange(this.pagination)
+            })
+        },
         dialogSubmit() {
             this.$refs.updateRef.validateFields((err, values) => {
                 if (err) {
                     return
                 }
                 this.dialogConfirmLoading = true
+                if (values.password) {
+                    values.password = this.$root.Md5Sum(values.password)
+                }
+                values.lock_status = values.lock_status ? 1: 0
                 updateUserApi(values).then(res => {
                     let msg = this.dialogDetail.id ? '用户信息更新成功': '用户创建成功'
                     this.$message.success(msg, 1, () => {
@@ -142,7 +173,7 @@ export default {
         },
         getDataDetail(id) {
             this.dialogLoading = true
-            getGroupDetailApi({id}).then(res => {
+            getUserDetailApi({id}).then(res => {
                 this.dialogLoading = false
                 this.dialogDetail = res
             }).catch( err => {

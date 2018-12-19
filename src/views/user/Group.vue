@@ -22,7 +22,7 @@
             :loading="tableLoading">
                 <span slot="op" slot-scope="text, record">
                     <span  @click="handleOpenEditDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
-                    <a-popconfirm title="确定要删除此服务器吗？" @confirm="handleDeleteServer(record.id)" okText="删除" cancelText="取消">
+                    <a-popconfirm title="确定要删除此服务器吗？" @confirm="handleDeleteGroup(record.id)" okText="删除" cancelText="取消">
                         <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
                     </a-popconfirm>
                 </span>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { updateGroupApi, getGroupListApi, getGroupDetailApi } from '@/api/user.js'
+import { updateGroupApi, getGroupListApi, getGroupDetailApi, deleteGroupApi } from '@/api/user.js'
 import GroupUpdateComponent from './GroupUpdateComponent.js'
 export default {
     data () {
@@ -101,6 +101,13 @@ export default {
             this.search.keyword = value
             this.pagination.current = 1
             this.handleTableChange(this.pagination)
+        },
+        handleDeleteGroup(id) {
+            deleteGroupApi({id}).then(res => {
+                this.$message.success('删除成功', 1)
+                this.$root.ResetPagination(this.pagination)
+                this.handleTableChange(this.pagination)
+            })
         },
         dialogSubmit() {
             this.$refs.updateRef.validateFields((err, values) => {
