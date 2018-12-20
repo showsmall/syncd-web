@@ -13,14 +13,14 @@ const GroupUpdate = {
             <a-form>
                 <a-form-item
                 {...{ props: formItemLayout }}
-                label='分组名称'>
+                label='集群名称'>
                     {getFieldDecorator('name', {
                         rules: [
-                            { required: true, message: '分组名称不能为空' },
+                            { required: true, message: '集群名称不能为空' },
                         ],
                         initialValue: this.detail.name,
                     })(
-                        <a-input autocomplete="off" placeholder='请输入分组名称' />
+                        <a-input autocomplete="off" placeholder='请输入集群名称' />
                     )}
                 </a-form-item>
             </a-form>

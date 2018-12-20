@@ -12,6 +12,26 @@ export function getProjectApi(params) {
     return get('/project/detail', params)
 }
 
-export function deleteProjectApi(params) {
-    return post('/project/delete', params)
+export function deleteProjectApi(data) {
+    return post('/project/delete', data)
+}
+
+export function getSpaceListApi(params) {
+    return get('/project/space/list', params)
+}
+
+export function updateSpaceApi(data) {
+    return post('/project/space/update', data)
+}
+
+export function getSpaceDetailApi(params) {
+    return get('/project/space/detail', params)
+}
+
+export function deleteSpaceApi(data) {
+    return post('/project/space/delete', data)
+}
+
+export function checkSpaceNameExistsApi(params) {
+    return get('/project/space/exists', params)
 }

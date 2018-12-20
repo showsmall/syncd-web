@@ -69,30 +69,30 @@ const routerMap = [
         },
         children: [
             {
-                path: 'new',
-                name: 'projectNew',
+                path: 'space',
+                name: 'projectSpace',
                 meta: {
-                    title: '新建项目',
-                    description: '创建新的上线项目',
+                    title: '项目空间',
                 },
-                component: _import('project/New'),
+                component: _import('project/Space'),
             },
             {
-                path: 'edit',
-                name: 'projectEdit',
+                path: 'project',
+                name: 'projectProject',
                 meta: {
-                    title: '编辑项目',
+                    title: '项目管理',
                     hide: true,
                 },
-                component: _import('project/Edit'),
+                component: _import('project/Project'),
             },
             {
-                path: 'list',
-                name: 'projectList',
+                path: 'user',
+                name: 'projectUser',
                 meta: {
-                    title: '项目列表',
+                    title: '成员管理',
+                    hide: true,
                 },
-                component: _import('project/List'),
+                component: _import('project/User'),
             },
         ],
     },
@@ -106,20 +106,20 @@ const routerMap = [
         },
         children: [
             {
-                path: 'list',
-                name: 'userList',
-                meta: {
-                    title: '用户管理',
-                },
-                component: _import('user/User'),
-            },
-            {
                 path: 'group',
                 name: 'userGroup',
                 meta: {
                     title: '用户组',
                 },
                 component: _import('user/Group'),
+            },
+            {
+                path: 'list',
+                name: 'userList',
+                meta: {
+                    title: '用户管理',
+                },
+                component: _import('user/User'),
             },
         ],
     },
@@ -136,7 +136,7 @@ const routerMap = [
                 path: 'group',
                 name: 'serverGroup',
                 meta: {
-                    title: '服务器分组',
+                    title: '集群管理',
                 },
                 component: _import('server/Group'),
             },
@@ -144,7 +144,7 @@ const routerMap = [
                 path: 'list',
                 name: 'serverList',
                 meta: {
-                    title: '服务器列表',
+                    title: '服务器管理',
                 },
                 component: _import('server/Server'),
             },

@@ -19,6 +19,9 @@ export default {
     },
 
     FormatDateTime(unixtime, format) {
+        if (!unixtime) {
+            return '--'
+        }
         if (!format) {
             format = 'YYYY-MM-DD HH:mm:SS'
         }

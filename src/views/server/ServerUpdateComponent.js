@@ -19,7 +19,7 @@ const GroupUpdate = {
             <a-form>
                 <a-form-item
                 {...{ props: formItemLayout }}
-                label='选择分组'>
+                label='所属集群'>
                     {getFieldDecorator('group_id', {
                         rules: [
                             { required: true, message: '请选择服务器所属分组' },

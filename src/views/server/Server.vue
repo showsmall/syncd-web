@@ -14,8 +14,8 @@
                         v-model="search.groupId"
                         allowClear
                         showSearch
-                        placeholder="搜索指定分组"
-                        notFoundContent="无分组数据"
+                        placeholder="搜索指定集群"
+                        notFoundContent="无集群数据"
                         style="width: 100%"
                         optionFilterProp="children">
                             <a-select-option v-for="group in dialogGroupList" :value="group.id">{{ group.name }}</a-select-option>
@@ -72,7 +72,7 @@ export default {
             tableColumns: [
                 {dataIndex: "id", title: 'ID', width: '6%'},
                 {dataIndex: "name", title: '名称'},
-                {dataIndex: "group_id", title: '分组', width: '20%', scopedSlots: { customRender: 'group_id' }},
+                {dataIndex: "group_id", title: '集群', width: '20%', scopedSlots: { customRender: 'group_id' }},
                 {dataIndex: "ip", title: 'IP', width: '15%'},
                 {dataIndex: "ssh_port", title: 'SSH Port', width: '10%'},
                 {dataIndex: "op", title: '操作', width: '20%', align: 'right', scopedSlots: { customRender: 'op' }},

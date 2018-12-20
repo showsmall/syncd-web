@@ -1,7 +1,7 @@
 import { Form } from 'ant-design-vue'
 import { updateProjectApi, getProjectApi } from '@/api/project.js'
 import { getGroupListApi } from '@/api/server.js'
-const NewProject = {
+const UpdateProject = {
     render() {
         const { getFieldDecorator, getFieldValue, setFieldsValue } = this.form
         const formItemLayout = {
@@ -66,10 +66,6 @@ const NewProject = {
         return (
             <a-form onSubmit={this.handleSubmit}>
                 <a-spin spinning={this.detailLoading}>
-                <a-card
-                class="app-card"
-                title="项目基本信息"
-                bordered={false}>
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='项目名称'>
@@ -128,11 +124,7 @@ const NewProject = {
                             <a-switch checkedChildren="启用" unCheckedChildren="停用" defaultChecked />
                         )}
                     </a-form-item>
-                </a-card>
-                <a-card
-                class="app-card"
-                title="源码管理"
-                bordered={false}>
+                    <a-divider></a-divider>
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='代码仓库类型'>
@@ -194,11 +186,7 @@ const NewProject = {
                             </a-radio-group>
                         )}
                     </a-form-item>
-                </a-card>
-                <a-card
-                class="app-card"
-                title="编译/打包管理"
-                bordered={false}>
+                    <a-divider></a-divider>
                     <a-form-item
                         label='编译/打包脚本'
                         {...{ props: formItemLayout }}>
@@ -211,11 +199,7 @@ const NewProject = {
                             </div>
                         )}
                     </a-form-item>
-                </a-card>
-                <a-card
-                class="app-card"
-                title="部署管理"
-                bordered={false}>
+                    <a-divider></a-divider>
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='选择上线集群'>
@@ -274,7 +258,7 @@ const NewProject = {
                                 { required: true, message: '请设置历史版本保留数' },
                             ],
                         })(
-                            <a-input-number min={1} max={99} />
+                            <a-input-number min={3} max={99} />
                         )}
                     </a-form-item>
                     <a-form-item
@@ -295,13 +279,23 @@ const NewProject = {
                             <a-input autocomplete="off" placeholder='代码部署之后运行的命令' />
                         )}
                     </a-form-item>
-                </a-card>
-                <a-card class="app-card app-form-submit" bordered={false}>
-                    <a-button type="primary" htmlType='submit'>提交</a-button>
-                </a-card>
+                    <a-divider></a-divider>
+                    <div style="text-align: right">
+                        <a-button  type="primary" htmlType='submit'>提交</a-button>
+                    </div>
                 </a-spin>
             </a-form>
         )
+    },
+    props: {
+        projectId: {
+            type: Number,
+            default: 0,
+        },
+        groupId: {
+            type: Number,
+            default: 0,
+        },
     },
     data () {
         return {
@@ -320,21 +314,30 @@ const NewProject = {
                     return
                 }
                 let postData = {... values}
-                postData.id = this.id
+                if (!this.projectId) {
+                    if (!this.groupId) {
+                        this.$error({
+                            title: '参数错误',
+                            content: (
+                                <div>
+                                    项目分组ID丢失，请重试!
+                                </div>
+                            ),
+                        })
+                        return
+                    }
+                    postData.group_id = this.groupId
+                }
+                postData.id = this.projectId
                 postData.status = postData.status ? 1: 0
                 postData.needAudit = postData.needAudit ? 1: 0
                 postData.deployServer = this.filterInvalidServerGroup(postData.deployServer)
                 updateProjectApi(postData).then(res => {
                     this.$success({
-                        title: this.detail.id ? '项目更新成功': '项目添加成功',
-                        content: (
-                            <div>
-                                点击确定，进入项目列表管理已添加项目
-                            </div>
-                        ),
+                        title: this.projectId ? '项目更新成功': '项目添加成功',
                         okText: "确定",
                         onOk: () => {
-                            this.$router.push({name: "projectList"})
+                            this.$emit('close')
                         }
                     });
                 })
@@ -395,11 +398,10 @@ const NewProject = {
         },
     },
     mounted() {
-        if (this.$route.query.id) {
-            this.id = this.$route.query.id
-            this.getDataDetail(this.$route.query.id)
+        if (this.projectId) {
+            this.getDataDetail(this.projectId)
         }
         this.getDataGroupList()
     },
 }
-export default Form.create()(NewProject)
+export default Form.create()(UpdateProject)

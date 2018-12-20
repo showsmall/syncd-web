@@ -120,7 +120,7 @@ export default {
                     children: [],
                 }
                 first.children.forEach(second => {
-                    if (!second.meta.hide) {
+                    if (!second.meta.hide || this.$route.name == second.name) {
                         item.children.push({
                             name: second.name,
                             meta: second.meta,
@@ -182,7 +182,11 @@ export default {
                 })
             })
             this.breadCrumb = breadCrumb
-            this.selectedKeys = [key]
+            if (key) {
+                this.selectedKeys = [key]
+            } else {
+                this.selectedKeys = []
+            }
         },
         gotoMenuRouter(key) {
             this.$router.push({name: key})
