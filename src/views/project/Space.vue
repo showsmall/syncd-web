@@ -2,6 +2,7 @@
     <div>
         <a-card
         class="app-card"
+        title="项目空间"
         :bordered="false">
             <div class="app-btn-group">
                 <a-row :gutter="10">
@@ -20,13 +21,27 @@
             :pagination="pagination"
             @change="handleTableChange"
             :loading="tableLoading">
+                <span class="app-content-list" slot="name" slot-scope="text, record">
+                    <div class="title">{{ record.name }}</div>
+                    <div v-if="record.description" class="description">{{ record.description }}</div>
+                </span>
                 <span slot="op" slot-scope="text, record">
                     <span @click="$root.GotoRouter('projectProject', {space: record.id})" class="app-link app-op"><icon-project />项目管理</span>
-                    <span class="app-link app-op"><a-icon type="team" />成员管理</span>
+                    <span @click="$root.GotoRouter('projectUser', {space: record.id})" class="app-link app-op"><a-icon type="team" />成员管理</span>
                     <span @click="handleOpenUpdateDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
-                    <a-popconfirm title="确定要删除此分组吗？" @confirm="handleDelete(record.id)" okText="删除" cancelText="取消">
-                        <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
-                    </a-popconfirm>
+                    <template v-if="record.have_project">
+                        <a-tooltip placement="topRight" >
+                            <template slot="title">
+                                <span>项目列表不为空，禁止删除</span>
+                            </template>
+                            <span class="app-op app-color-gray app-no-allow"><a-icon type="delete" />删除</span>
+                        </a-tooltip>
+                    </template>
+                    <template v-else>
+                        <a-popconfirm title="确定要删除此分组吗？" @confirm="handleDelete(record.id)" okText="删除" cancelText="取消">
+                            <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
+                        </a-popconfirm>
+                    </template>
                 </span>
             </a-table>
         </a-card>
@@ -61,7 +76,7 @@ export default {
         return {
             tableLoading: false,
             tableColumns: [
-                {dataIndex: "name", title: '项目空间'},
+                {dataIndex: "name", title: '项目空间', scopedSlots: { customRender: 'name' }},
                 {dataIndex: "op", title: '操作', width: '30%', align: 'right', scopedSlots: { customRender: 'op' }},
             ],
             tableSource: [],

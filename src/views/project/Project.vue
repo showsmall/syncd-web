@@ -2,10 +2,21 @@
     <div>
         <a-card
         class="app-card"
+        title="项目管理"
         :bordered="false">
+            <a-spin :spinning="spaceLoading" tip="Loading...">
+                <div class="app-content-list">
+                    <h3>{{ this.spaceDetail.name }}</h3>
+                    <p v-if="this.spaceDetail.description" class="description">{{ this.spaceDetail.description }}</p>
+                </div>
+            </a-spin>
+            <a-divider></a-divider>
             <div class="app-btn-group">
                 <a-row :gutter="10">
-                    <a-col :span="18"></a-col>
+                    <a-col :span="4">
+                        <a-button @click="handleOpenAddDialog" type="primary" icon="plus">新增项目</a-button>
+                    </a-col>
+                    <a-col :span="14"></a-col>
                     <a-col :span="6">
                         <a-input-search v-model="search.keyword" placeholder="关键词搜索，ID、名称" @search="handleSearch" enterButton/>
                     </a-col>
@@ -30,8 +41,8 @@
                     <span v-else>否</span>
                 </template>
                 <span slot="op" slot-scope="text, record">
-                    <span @click="handleShowViewDialog(record.id)" class="app-link app-op"><a-icon type="eye" />查看</span>
-                    <span @click="handleShowUpdateDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
+                    <span @click="handleOpenViewDialog(record.id)" class="app-link app-op"><a-icon type="eye" />查看</span>
+                    <span @click="handleOpenUpdateDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
                     <template v-if="record.status == 0">
                         <a-popconfirm title="确定要删除此分组吗？" @confirm="handleDeleteProject(record.id)" okText="删除" cancelText="取消">
                             <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
@@ -68,14 +79,14 @@
         :maskClosable="false"
         width="60vw"
         @cancel="dialogUpdateVisible = false">
-            <project-update-component @close="closeUpdateDialog" :project-id="projectId"></project-update-component>
+            <project-update-component @close="closeUpdateDialog" :space-id="spaceId" :project-id="projectId"></project-update-component>
         </a-modal>
 
     </div>
 </template>
 
 <script>
-import { listProjectApi, deleteProjectApi } from '@/api/project.js'
+import { listProjectApi, deleteProjectApi, getSpaceDetailApi } from '@/api/project.js'
 import { getGroupMultiApi } from '@/api/server.js'
 import ProjectViewComponent from './ProjectViewComponent.js'
 import ProjectUpdateComponent from './ProjectUpdateComponent.js'
@@ -107,7 +118,9 @@ export default {
             wrapperCol: { span: 18 },
             projectId: 0,
 
-            space: 0,
+            spaceId: 0,
+            spaceLoading: false,
+            spaceDetail: {},
         }
     },
     methods: {
@@ -130,11 +143,15 @@ export default {
                 this.handleTableChange(this.pagination)
             })
         },
-        handleShowViewDialog(id) {
+        handleOpenAddDialog() {
+            this.projectId = 0
+            this.dialogUpdateVisible = true
+        },
+        handleOpenViewDialog(id) {
             this.projectId = id
             this.dialogViewVisible = true
         },
-        handleShowUpdateDialog(id) {
+        handleOpenUpdateDialog(id) {
             this.projectId = id
             this.dialogUpdateVisible = true
         },
@@ -145,21 +162,31 @@ export default {
         getDataList(params) {
             this.tableLoading = true
             let offset = (params.page - 1) * params.pageSize
-            listProjectApi({keyword: this.search.keyword, offset: offset, limit: params.pageSize}).then(res => {
+            listProjectApi({space_id: this.spaceId, keyword: this.search.keyword, offset: offset, limit: params.pageSize}).then(res => {
                 this.tableLoading = false
                 this.pagination.total = res.total
                 this.tableSource = res.list
             }).catch(err => {
                 this.tableLoading = false
             })
-        }
+        },
+        getSpaceDetail(spaceId) {
+            this.spaceLoading = true
+            getSpaceDetailApi({id: spaceId}).then(res => {
+                this.spaceLoading = false
+                this.spaceDetail = res
+            }).catch(err => {
+                this.spaceLoading = false
+            })
+        },
     },
     mounted() {
-        let space = this.$route.query.space
-        if (!space) {
+        let spaceId = parseInt(this.$route.query.space)
+        if (!spaceId) {
             this.$root.GotoRouter('projectSpace')
         }
-        this.space = space
+        this.spaceId = spaceId
+        this.getSpaceDetail(this.spaceId)
         this.handleTableChange(this.pagination)
     },
 }

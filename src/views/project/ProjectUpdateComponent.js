@@ -1,5 +1,5 @@
 import { Form } from 'ant-design-vue'
-import { updateProjectApi, getProjectApi } from '@/api/project.js'
+import { updateProjectApi, getProjectApi, checkProjectNameExistsApi } from '@/api/project.js'
 import { getGroupListApi } from '@/api/server.js'
 const UpdateProject = {
     render() {
@@ -63,17 +63,41 @@ const UpdateProject = {
             )
         }
 
+        let vm = this
+        let nameExistsCb = function(rule, value, callback) {
+            if (!value) {
+                callback()
+                return
+            }
+            vm.nameHelp = `正在验证名称是否被占用...`
+            checkProjectNameExistsApi({id: vm.detail.id, space_id: vm.spaceId, keyword: value}).then(res => {
+                if (!res.exists) {
+                    vm.nameHelp = undefined
+                    callback()
+                } else {
+                    vm.nameHelp = `抱歉！该名称已经存在，请重新输入`
+                    callback(`抱歉！该名称已经存在，请重新输入`)
+                }
+            }).catch(err => {
+                vm.nameHelp = '网络错误, 校验失败'
+                callback('网络错误, 校验失败')
+            })
+        }
+
         return (
             <a-form onSubmit={this.handleSubmit}>
                 <a-spin spinning={this.detailLoading}>
                     <a-form-item
                     {...{ props: formItemLayout }}
+                    help={this.nameHelp}
                     label='项目名称'>
                         {getFieldDecorator('name', {
                             rules: [
                                 { required: true, message: '项目名称不能为空' },
+                                { validator: nameExistsCb},
                             ],
                             initialValue: this.detail.name,
+                            validateTrigger: 'blur',
                         })(
                             <a-input autocomplete="off" placeholder='请输入项目名称' />
                         )}
@@ -86,6 +110,7 @@ const UpdateProject = {
                                 { required: true, message: '项目名称不能为空' },
                             ],
                             initialValue: this.detail.description,
+                            validateTrigger: 'blur',
                         })(
                             <a-textarea placeholder="请输入项目描述信息" rows={3} />
                         )}
@@ -148,6 +173,7 @@ const UpdateProject = {
                                 { required: true, message: '代码仓库地址不能为空' },
                             ],
                             initialValue: this.detail.repo_url,
+                            validateTrigger: 'blur',
                         })(
                             <a-input autocomplete="off" placeholder='请输入代码仓库地址' />
                         )}
@@ -241,9 +267,10 @@ const UpdateProject = {
                     label='目录'>
                         {getFieldDecorator('deployPath', {
                             rules: [
-                                { required: true, message: '请选择上线集群' },
+                                { required: true, message: '请设置代码部署目录' },
                             ],
                             initialValue: this.detail.deploy_path,
+                            validateTrigger: 'blur',
                         })(
                             <a-input autocomplete="off" placeholder='代码/包部署的目录' />
                         )}
@@ -257,6 +284,7 @@ const UpdateProject = {
                             rules: [
                                 { required: true, message: '请设置历史版本保留数' },
                             ],
+                            validateTrigger: 'blur',
                         })(
                             <a-input-number min={3} max={99} />
                         )}
@@ -292,7 +320,7 @@ const UpdateProject = {
             type: Number,
             default: 0,
         },
-        groupId: {
+        spaceId: {
             type: Number,
             default: 0,
         },
@@ -303,6 +331,7 @@ const UpdateProject = {
             detail: {},
             serverGroupList: [],
             detailLoading: false,
+            nameHelp: undefined,
         }
     },
     methods: {
@@ -314,28 +343,30 @@ const UpdateProject = {
                     return
                 }
                 let postData = {... values}
-                if (!this.projectId) {
-                    if (!this.groupId) {
-                        this.$error({
-                            title: '参数错误',
-                            content: (
-                                <div>
-                                    项目分组ID丢失，请重试!
-                                </div>
-                            ),
-                        })
-                        return
-                    }
-                    postData.group_id = this.groupId
+                if (!this.spaceId) {
+                    this.$error({
+                        title: '参数错误',
+                        content: (
+                            <div>
+                                项目空间ID丢失，操作失败，请重试!
+                            </div>
+                        ),
+                    })
+                    return
                 }
+                postData.space_id = this.spaceId
                 postData.id = this.projectId
                 postData.status = postData.status ? 1: 0
                 postData.needAudit = postData.needAudit ? 1: 0
                 postData.deployServer = this.filterInvalidServerGroup(postData.deployServer)
                 updateProjectApi(postData).then(res => {
+                    let opMsg = this.projectId ? '更新成功': '新增成功'
                     this.$success({
-                        title: this.projectId ? '项目更新成功': '项目添加成功',
+                        title: opMsg,
                         okText: "确定",
+                        content: (
+                            <div>恭喜，项目{opMsg}，点击确定返回项目列表</div>
+                        ),
                         onOk: () => {
                             this.$emit('close')
                         }

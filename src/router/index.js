@@ -109,7 +109,7 @@ const routerMap = [
                 path: 'group',
                 name: 'userGroup',
                 meta: {
-                    title: '用户组',
+                    title: '角色管理',
                 },
                 component: _import('user/Group'),
             },

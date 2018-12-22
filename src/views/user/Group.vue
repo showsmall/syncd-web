@@ -6,7 +6,7 @@
             <div class="app-btn-group">
                 <a-row :gutter="10">
                     <a-col :span="4">
-                        <a-button @click="handleOpenAddDialog" type="primary" icon="plus">新增用户组</a-button>
+                        <a-button @click="handleOpenAddDialog" type="primary" icon="plus">新增角色</a-button>
                     </a-col>
                     <a-col :span="14"></a-col>
                     <a-col :span="6">
@@ -87,7 +87,7 @@ export default {
             })
         },
         handleOpenAddDialog() {
-            this.dialogTitle = '新增用户组'
+            this.dialogTitle = '新增角色'
             this.dialogVisible = true
             this.dialogDetail = {}
         },
@@ -116,7 +116,7 @@ export default {
                 }
                 this.dialogConfirmLoading = true
                 updateGroupApi(values).then(res => {
-                    let msg = this.dialogDetail.id ? '用户组信息更新成功': '用户组信息创建成功'
+                    let msg = this.dialogDetail.id ? '角色信息更新成功': '角色信息创建成功'
                     this.$message.success(msg, 1, () => {
                         this.dialogCancel()
                         this.dialogConfirmLoading = false

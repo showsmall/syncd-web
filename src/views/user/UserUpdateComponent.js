@@ -67,10 +67,10 @@ const UserUpdate = {
             <a-form>
                 <a-form-item
                 {...{ props: formItemLayout }}
-                label='用户组'>
+                label='角色'>
                     {getFieldDecorator('group_id', {
                         rules: [
-                            { required: true, message: '用户组不能为空' },
+                            { required: true, message: '角色不能为空' },
                         ],
                         initialValue: this.detail.group_id,
                     })(

@@ -76,12 +76,11 @@ export default {
         return {
             search: {},
             tableColumns: [
-                {dataIndex: "id", title: 'ID', width: '10%'},
                 {dataIndex: "name", title: '用户名'},
-                {dataIndex: "group_name", title: '用户组', width: '15%'},
-                {dataIndex: "lock_status", title: '状态', scopedSlots: { customRender: 'lock_status' }},
+                {dataIndex: "email", title: '邮箱'},
+                {dataIndex: "group_name", title: '角色', width: '15%'},
+                {dataIndex: "lock_status", title: '状态', width: '10%', scopedSlots: { customRender: 'lock_status' }},
                 {dataIndex: "last_login_time", title: '上次登录时间', width: '15%', scopedSlots: { customRender: 'last_login_time' }},
-                {dataIndex: "last_login_ip", title: '上次登录IP', width: '15%'},
                 {dataIndex: "op", title: '操作', width: '15%', align: 'right', scopedSlots: { customRender: 'op' }},
             ],
             tableSource: [],

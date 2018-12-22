@@ -39,3 +39,7 @@ export function checkUserExistsApi(params) {
 export function deleteUserApi(data) {
     return post('/user/delete', data)
 }
+
+export function searchUserApi(params) {
+    return get('/user/search', params)
+}

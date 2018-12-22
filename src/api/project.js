@@ -35,3 +35,15 @@ export function deleteSpaceApi(data) {
 export function checkSpaceNameExistsApi(params) {
     return get('/project/space/exists', params)
 }
+
+export function checkProjectNameExistsApi(params) {
+    return get('/project/exists', params)
+}
+
+export function addSpaceUserApi(data) {
+    return post('/project/space/user/add', data)
+}
+
+export function getSpaceUserListApi(params) {
+    return get('/project/space/user/list')
+}
