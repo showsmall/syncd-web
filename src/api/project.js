@@ -47,3 +47,7 @@ export function addSpaceUserApi(data) {
 export function getSpaceUserListApi(params) {
     return get('/project/space/user/list')
 }
+
+export function removeSpaceUserApi(data) {
+    return post('/project/space/user/remove', data)
+}

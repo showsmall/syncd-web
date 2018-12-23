@@ -39,14 +39,36 @@
             :pagination="pagination"
             @change="handleTableChange"
             :loading="tableLoading">
-
+                <span slot="lock_status" slot-scope="text, record">
+                    <template v-if="text == 1">
+                        <a-tooltip placement="top" >
+                            <template slot="title">
+                                <span>用户可正常登陆</span>
+                            </template>
+                            <span class="app-color-success"><a-icon type="unlock" /> 正常</span>
+                        </a-tooltip>
+                    </template>
+                    <template v-if="text == 0">
+                        <a-tooltip placement="top">
+                            <template slot="title">
+                                <span>用户被锁定，禁止登录</span>
+                            </template>
+                            <span class="app-color-gray"><a-icon type="lock" /> 锁定</span>
+                        </a-tooltip>
+                    </template>
+                </span>
+                <span slot="op" slot-scope="text, record">
+                    <a-popconfirm title="确定要移除吗？" @confirm="handleRemoveUser(record.id)" okText="移除" cancelText="取消">
+                        <span class="app-link app-op app-remove"><a-icon type="delete" />移除</span>
+                    </a-popconfirm>
+                </span>
             </a-table>
         </a-card>
     </div>
 </template>
 
 <script>
-import { getSpaceDetailApi, addSpaceUserApi, getSpaceUserListApi } from '@/api/project.js'
+import { getSpaceDetailApi, addSpaceUserApi, getSpaceUserListApi, removeSpaceUserApi } from '@/api/project.js'
 import { searchUserApi } from '@/api/user.js'
 export default {
     data () {
@@ -63,7 +85,7 @@ export default {
                 {dataIndex: "email", title: '邮箱'},
                 {dataIndex: "group_name", title: '角色', width: '15%'},
                 {dataIndex: "lock_status", title: '状态', width: '10%', scopedSlots: { customRender: 'lock_status' }},
-                {dataIndex: "op", title: '操作', width: '15%', align: 'right', scopedSlots: { customRender: 'op' }},
+                {dataIndex: "op", title: '操作', width: '10%', align: 'right', scopedSlots: { customRender: 'op' }},
             ],
             tableSource: [],
             pagination: {
@@ -95,6 +117,7 @@ export default {
             addSpaceUserApi({space_id: this.spaceId, user_id: this.selectedUser.key}).then(res => {
                 this.$message.success('用户添加成功');
                 this.selectedUser = undefined
+                this.handleTableChange(this.pagination)
             }).catch(err => {
                 this.selectedUser = undefined
             })
@@ -105,6 +128,13 @@ export default {
             this.getDataList({
                 page: pagination.current,
                 pageSize: pagination.pageSize,
+            })
+        },
+        handleRemoveUser(id) {
+            removeSpaceUserApi({id}).then(res => {
+                this.$message.success('移除成功', 1)
+                this.$root.ResetPagination(this.pagination)
+                this.handleTableChange(this.pagination)
             })
         },
         getDataList(params) {
@@ -127,7 +157,7 @@ export default {
     mounted() {
         let spaceId = parseInt(this.$route.query.space)
         if (!spaceId) {
-            this.$root.GotoRouter('projectSpace')
+            this.$root.GotoRouter('p`rojectSpace')
         }
         this.spaceId = spaceId
         this.getSpaceDetail(this.spaceId)
