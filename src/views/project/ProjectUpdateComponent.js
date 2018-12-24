@@ -22,7 +22,7 @@ const UpdateProject = {
             return list
         }
         const renderServerGroupList = () => {
-            let srvList = getFieldValue('deployServer')
+            let srvList = getFieldValue('deploy_server')
             let renderList = []
             if (srvList) {
                 srvList.forEach((srv, index) => {
@@ -117,22 +117,9 @@ const UpdateProject = {
                     </a-form-item>
                     <a-form-item
                     {...{ props: formItemLayout }}
-                    label='项目空间'
-                    help='存放项目代码的目录, 例如: /home/syncd/project-demo'>
-                        {getFieldDecorator('space', {
-                            rules: [
-                                { required: true, message: '项目空间不能为空' },
-                            ],
-                            initialValue: this.detail.space,
-                        })(
-                            <a-input autocomplete="off" placeholder='请输入项目空间' />
-                        )}
-                    </a-form-item>
-                    <a-form-item
-                    {...{ props: formItemLayout }}
                     label='开启审核'
                     help='开启后，上线单需要审核通过后才能发起上线'>
-                        {getFieldDecorator('needAudit', {
+                        {getFieldDecorator('need_audit', {
                             initialValue: this.detail.need_audit ? true: false,
                             valuePropName: 'checked',
                         })(
@@ -141,12 +128,15 @@ const UpdateProject = {
                     </a-form-item>
                     <a-form-item
                     {...{ props: formItemLayout }}
-                    label='项目启用'>
-                        {getFieldDecorator('status', {
-                            initialValue: this.detail.status ? true : false,
-                            valuePropName: 'checked',
-                        })(
-                            <a-switch checkedChildren="启用" unCheckedChildren="停用" defaultChecked />
+                    label='项目状态'>
+                        {this.detail.status == 1 ? (
+                            <span class="app-color-success">
+                                <a-icon type="check" /> 已启用
+                            </span>
+                        ): (
+                            <span class="app-color-error">
+                                <a-icon type="close" /> 未启用
+                            </span>
                         )}
                     </a-form-item>
                     <a-divider></a-divider>
@@ -160,15 +150,15 @@ const UpdateProject = {
                             initialValue: this.detail.repo,
                         })(
                             <a-radio-group>
-                                <a-radio value='git'>Git</a-radio>
-                                <a-radio value='svn'>Svn</a-radio>
+                            <a-radio value='git'>Git</a-radio>
+                            <a-radio value='svn'>Svn</a-radio>
                             </a-radio-group>
                         )}
                     </a-form-item>
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='代码仓库地址'>
-                        {getFieldDecorator('repoUrl', {
+                        {getFieldDecorator('repo_url', {
                             rules: [
                                 { required: true, message: '代码仓库地址不能为空' },
                             ],
@@ -181,7 +171,7 @@ const UpdateProject = {
                     <a-form-item
                     {...{ props: formItemSmallLayout }}
                     label='用户名'>
-                        {getFieldDecorator('repoUser', {
+                        {getFieldDecorator('repo_user', {
                             initialValue: this.detail.repo_user,
                         })(
                             <a-input autocomplete="off" placeholder='请输入用户名' />
@@ -190,7 +180,7 @@ const UpdateProject = {
                     <a-form-item
                     {...{ props: formItemSmallLayout }}
                     label='密码'>
-                        {getFieldDecorator('repoPass', {
+                        {getFieldDecorator('repo_pass', {
                             initialValue: this.detail.repo_pass,
                         })(
                             <a-input type="password" autocomplete="off" placeholder='请输入密码' />
@@ -200,7 +190,7 @@ const UpdateProject = {
                     {...{ props: formItemLayout }}
                     help="测试环境推荐分支上线，生产环境推荐tag上线"
                     label='上线模式'>
-                        {getFieldDecorator('repoMode', {
+                        {getFieldDecorator('repo_mode', {
                             rules: [
                                 { required: true, message: '请选择上线模式' },
                             ],
@@ -210,19 +200,6 @@ const UpdateProject = {
                                 <a-radio value={1}>分支上线</a-radio>
                                 <a-radio value={2}>tag上线</a-radio>
                             </a-radio-group>
-                        )}
-                    </a-form-item>
-                    <a-divider></a-divider>
-                    <a-form-item
-                        label='编译/打包脚本'
-                        {...{ props: formItemLayout }}>
-                        {getFieldDecorator('buildScript', {
-                            initialValue: this.detail.build_script,
-                        })(
-                            <div>
-                                <a-textarea autosize={{ minRows: 3, maxRows: 20 }} />
-                                <span>脚本可用变量 <a href="javascript:;">参见>></a></span>
-                            </div>
                         )}
                     </a-form-item>
                     <a-divider></a-divider>
@@ -239,7 +216,7 @@ const UpdateProject = {
                         onSelect={this.handleServerSelect}>
                             {renderServerGroupOpts()}
                         </a-select>
-                        {getFieldDecorator('deployServer', {
+                        {getFieldDecorator('deploy_server', {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
@@ -253,19 +230,19 @@ const UpdateProject = {
                     <a-form-item
                     {...{ props: formItemSmallLayout }}
                     label='用户'>
-                        {getFieldDecorator('deployUser', {
+                        {getFieldDecorator('deploy_user', {
                             rules: [
                                 { required: true, message: '请选择上线集群' },
                             ],
                             initialValue: this.detail.deploy_user,
                         })(
-                            <a-input autocomplete="off" placeholder='目标机部署的用户' />
+                            <a-input autocomplete="off" placeholder='目标机用户' />
                         )}
                     </a-form-item>
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='目录'>
-                        {getFieldDecorator('deployPath', {
+                        {getFieldDecorator('deploy_path', {
                             rules: [
                                 { required: true, message: '请设置代码部署目录' },
                             ],
@@ -279,7 +256,7 @@ const UpdateProject = {
                     {...{ props: formItemLayout }}
                     help='保留最近上线版本数, 回滚使用'
                     label='历史版本保留数'>
-                        {getFieldDecorator('deployHistory', {
+                        {getFieldDecorator('deploy_history', {
                             initialValue: this.detail.deploy_history ? this.detail.deploy_history : 3,
                             rules: [
                                 { required: true, message: '请设置历史版本保留数' },
@@ -292,7 +269,7 @@ const UpdateProject = {
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='pre_deploy'>
-                        {getFieldDecorator('preDeployCmd', {
+                        {getFieldDecorator('pre_deploy_cmd', {
                             initialValue: this.detail.pre_deploy_cmd
                         })(
                             <a-input autocomplete="off" placeholder='代码部署之前运行的命令' />
@@ -301,7 +278,7 @@ const UpdateProject = {
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='post_deploy'>
-                        {getFieldDecorator('postDeployCmd', {
+                        {getFieldDecorator('post_deploy_cmd', {
                             initialValue: this.detail.post_deploy_cmd
                         })(
                             <a-input autocomplete="off" placeholder='代码部署之后运行的命令' />
@@ -356,9 +333,8 @@ const UpdateProject = {
                 }
                 postData.space_id = this.spaceId
                 postData.id = this.projectId
-                postData.status = postData.status ? 1: 0
-                postData.needAudit = postData.needAudit ? 1: 0
-                postData.deployServer = this.filterInvalidServerGroup(postData.deployServer)
+                postData.need_audit = postData.need_audit ? 1: 0
+                postData.deploy_server = this.filterInvalidServerGroup(postData.deploy_server)
                 updateProjectApi(postData).then(res => {
                     let opMsg = this.projectId ? '更新成功': '新增成功'
                     this.$success({
@@ -375,14 +351,14 @@ const UpdateProject = {
             })
         },
         handleServerSelect(value) {
-            let list = this.form.getFieldValue('deployServer')
+            let list = this.form.getFieldValue('deploy_server')
             if (!list) {
                 list = []
             }
             if (list.indexOf(value) == -1) {
                 list.push(value)
             }
-            this.form.setFieldsValue({ deployServer: list})
+            this.form.setFieldsValue({ deploy_server: list})
         },
         findServerItem(id) {
             let server = {}
@@ -394,7 +370,7 @@ const UpdateProject = {
             return server
         },
         removeServerItem(srvId) {
-            let list = this.form.getFieldValue('deployServer')
+            let list = this.form.getFieldValue('deploy_server')
             if (!list) {
                 list = []
             }
@@ -402,7 +378,7 @@ const UpdateProject = {
             if (index > -1) {
                 list.splice(index, 1)
             }
-            this.form.setFieldsValue({ deployServer: list})
+            this.form.setFieldsValue({ deploy_server: list})
         },
         filterInvalidServerGroup(groupList) {
             let newGroupList = []

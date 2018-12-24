@@ -40,11 +40,11 @@ const ViewProject = {
                     wrapperCol={formItemLayout.wrapperCol}>
                         {this.detail.status == 1 ? (
                             <span class="app-color-success">
-                                <a-icon type="check" /> 启用
+                                <a-icon type="check" /> 已启用
                             </span>
                         ): (
                             <span class="app-color-error">
-                                <a-icon type="close" /> 停用
+                                <a-icon type="close" /> 未启用
                             </span>
                         )}
                     </a-form-item>
@@ -86,16 +86,6 @@ const ViewProject = {
                                 <a-icon type="tag" /> Tag上线
                             </span>
                         )}
-                    </a-form-item>
-                    <a-divider></a-divider>
-                    <a-form-item
-                    label='编译/打包脚本'
-                    labelCol={formItemLayout.labelCol}
-                    wrapperCol={formItemLayout.wrapperCol}>
-                        <a-textarea
-                        readonly="readonly"
-                        value={this.detail.build_script}
-                        autosize={{minRows:3, maxRows:20}} />
                     </a-form-item>
                     <a-divider></a-divider>
                     <a-form-item

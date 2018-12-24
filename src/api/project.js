@@ -16,6 +16,10 @@ export function deleteProjectApi(data) {
     return post('/project/delete', data)
 }
 
+export function changeProjectStatusApi(data) {
+    return post('/project/status/change', data)
+}
+
 export function getSpaceListApi(params) {
     return get('/project/space/list', params)
 }

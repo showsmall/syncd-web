@@ -32,15 +32,15 @@
                     <span v-if="text == 1">分支</span>
                     <span v-else>Tag</span>
                 </template>
-                <template slot="status" slot-scope="text">
-                    <span class="app-color-success" v-if="text == 1"><a-icon type="check-circle" /> 启用</span>
-                    <span class="app-color-gray" v-else><a-icon type="close-circle" /> 停用</span>
+                <template slot="status" slot-scope="text, record">
+                    <a-switch @click="handleProjectChange(record)" checkedChildren="启用" unCheckedChildren="未启用" v-model="record.status" />
                 </template>
                 <template slot="need_audit" slot-scope="text">
                     <span v-if="text == 1">是</span>
                     <span v-else>否</span>
                 </template>
                 <span slot="op" slot-scope="text, record">
+                    <span @click="handleOpenViewDialog(record.id)" class="app-link app-op"><a-icon type="scan" />仓库重置</span>
                     <span @click="handleOpenViewDialog(record.id)" class="app-link app-op"><a-icon type="eye" />查看</span>
                     <span @click="handleOpenUpdateDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
                     <template v-if="record.status == 0">
@@ -49,7 +49,7 @@
                         </a-popconfirm>
                     </template>
                     <template v-else>
-                        <a-tooltip placement="topRight" >
+                        <a-tooltip placement="topRight">
                             <template slot="title">
                                 <span>删除项目前请先停用项目</span>
                             </template>
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { listProjectApi, deleteProjectApi, getSpaceDetailApi } from '@/api/project.js'
+import { listProjectApi, deleteProjectApi, getSpaceDetailApi, changeProjectStatusApi } from '@/api/project.js'
 import { getGroupMultiApi } from '@/api/server.js'
 import ProjectViewComponent from './ProjectViewComponent.js'
 import ProjectUpdateComponent from './ProjectUpdateComponent.js'
@@ -102,7 +102,7 @@ export default {
                 {dataIndex: "repo_mode", title: '上线方式', width: '10%', align: 'center', scopedSlots: { customRender: 'repo_mode' }},
                 {dataIndex: "need_audit", title: '开启审核', width: '10%', align: 'center', scopedSlots: { customRender: 'need_audit' }},
                 {dataIndex: "status", title: '项目启用', width: '10%', align: 'center', scopedSlots: { customRender: 'status' }},
-                {dataIndex: "op", title: '操作', width: '20%', align: 'right', scopedSlots: { customRender: 'op' }},
+                {dataIndex: "op", title: '操作', width: '30%', align: 'right', scopedSlots: { customRender: 'op' }},
             ],
             tableLoading: false,
             tableSource: [],
@@ -155,6 +155,13 @@ export default {
             this.projectId = id
             this.dialogUpdateVisible = true
         },
+        handleProjectChange(item) {
+            changeProjectStatusApi({id: item.id, status: item.status ? 1: 0}).then(res => {
+
+            }).catch(err => {
+                item.status = !item.status
+            })
+        },
         closeUpdateDialog() {
             this.dialogUpdateVisible = false
             this.handleTableChange(this.pagination)
@@ -165,6 +172,11 @@ export default {
             listProjectApi({space_id: this.spaceId, keyword: this.search.keyword, offset: offset, limit: params.pageSize}).then(res => {
                 this.tableLoading = false
                 this.pagination.total = res.total
+                if (res.list) {
+                    res.list.forEach((item, index) => {
+                        res.list[index].status = item.status ? true: false
+                    })
+                }
                 this.tableSource = res.list
             }).catch(err => {
                 this.tableLoading = false

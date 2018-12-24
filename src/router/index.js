@@ -45,17 +45,9 @@ const routerMap = [
                 path: 'pending',
                 name: 'deployPending',
                 meta: {
-                    title: '上线单审核',
+                    title: '上线单管理',
                 },
-                component: _import('deploy/Pending'),
-            },
-            {
-                path: 'list',
-                name: 'deployList',
-                meta: {
-                    title: '上线单列表',
-                },
-                component: _import('deploy/List'),
+                component: _import('deploy/Deploy'),
             },
         ],
     },
