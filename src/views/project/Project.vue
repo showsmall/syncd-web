@@ -40,7 +40,7 @@
                     <span v-else>否</span>
                 </template>
                 <span slot="op" slot-scope="text, record">
-                    <span @click="handleOpenViewDialog(record.id)" class="app-link app-op"><a-icon type="scan" />仓库重置</span>
+                    <span @click="handleResetRepo(record.id)" class="app-link app-op"><a-icon type="scan" />仓库重置</span>
                     <span @click="handleOpenViewDialog(record.id)" class="app-link app-op"><a-icon type="eye" />查看</span>
                     <span @click="handleOpenUpdateDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
                     <template v-if="record.status == 0">
@@ -88,6 +88,7 @@
 <script>
 import { listProjectApi, deleteProjectApi, getSpaceDetailApi, changeProjectStatusApi } from '@/api/project.js'
 import { getGroupMultiApi } from '@/api/server.js'
+import { resetRepoApi } from '@/api/deploy.js'
 import ProjectViewComponent from './ProjectViewComponent.js'
 import ProjectUpdateComponent from './ProjectUpdateComponent.js'
 export default {
@@ -160,6 +161,18 @@ export default {
 
             }).catch(err => {
                 item.status = !item.status
+            })
+        },
+        handleResetRepo(id) {
+            const hideLoading = this.$message.loading('代码仓库重置中，请不要离开此页面...', 0);
+            resetRepoApi({project_id: id}).then(res => {
+                hideLoading()
+                setTimeout(() => {
+                    this.$message.success("代码仓库重置成功")
+                }, 500)
+            }).catch(err => {
+                hideLoading()
+                this.$message.error("代码仓库重置失败")
             })
         },
         closeUpdateDialog() {

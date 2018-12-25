@@ -42,9 +42,10 @@
         :confirmLoading="dialogConfirmLoading"
         :keyboard="false"
         :maskClosable="false"
-        okText="确定"
-        cancelText="取消"
+        okText="提交申请"
+        cancelText="放弃"
         :destroyOnClose="true"
+        width="50%"
         @cancel="dialogCancel">
             <apply-update-component ref="updateRef" :space-id="spaceId" :project-id="projectId"></apply-update-component>
         </a-modal>
@@ -105,7 +106,12 @@ export default {
             this.dialogVisible = true
         },
         dialogSubmit() {
-
+            this.$refs.updateRef.validateFields((err, values) => {
+                if (err) {
+                    return
+                }
+                console.log(values)
+            })
         },
         dialogCancel() {
             this.dialogVisible = false

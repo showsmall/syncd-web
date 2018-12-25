@@ -10,7 +10,7 @@ Vue.prototype.$CancelAjaxRequet = function() {}
 
 const service = axios.create({
     baseURL: API_URL + '/',
-    timeout: 5000
+    timeout: 30000
 });
 
 service.interceptors.request.use(config => {

@@ -202,6 +202,21 @@ const UpdateProject = {
                             </a-radio-group>
                         )}
                     </a-form-item>
+                    { getFieldValue('repo_mode') == 1 ? (
+                        <a-form-item
+                        {...{ props: formItemSmallLayout }}
+                        label='指定上线分支'>
+                            {getFieldDecorator('repo_branch', {
+                                rules: [
+                                    { required: true, message: '请选择上线模式' },
+                                ],
+                                initialValue: this.detail.repo_branch,
+                                validateTrigger: 'blur',
+                            })(
+                                <a-input autocomplete="off" placeholder='请输入指定上线分支' />
+                            )}
+                        </a-form-item>
+                    ) : ''}
                     <a-divider></a-divider>
                     <a-form-item
                     {...{ props: formItemLayout }}

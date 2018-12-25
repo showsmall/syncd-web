@@ -79,7 +79,7 @@ const ViewProject = {
                     wrapperCol={formItemLayout.wrapperCol}>
                         {this.detail.repo_mode ? (
                             <span>
-                                <a-icon type="branches" /> 分支上线
+                                <a-icon type="branches" /> 分支上线 - <strong>{ this.detail.repo_branch }</strong> 分支
                             </span>
                         ) : (
                             <span>
