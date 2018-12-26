@@ -26,6 +26,9 @@ const UpdateApply = {
             })
             return list
         }
+        getFieldDecorator('project_id', {
+            initialValue: this.projectId,
+        })
         return (
             <a-form>
                 <a-form-item
@@ -63,28 +66,25 @@ const UpdateApply = {
                             ],
                             validateTrigger: 'blur',
                         })(<div></div>)}
-                        <a-row gutter={10}>
-                            <a-col span={16}>
-                                <a-select
-                                showSearch
-                                placeholder="关键词搜索"
-                                filterOption={false}
-                                notFoundContent={this.fetching ? undefined : '未找到数据'}
-                                onChange={this.handleSelectCommit}
-                                defaultActiveFirstOption={false}
-                                style={{ width: '100%' }}>
-                                    { this.fetching ? (
-                                        <a-spin slot="notFoundContent" size="small"/>
-                                    ): '' }
-                                    {renderCommitListOpts()}
-                                </a-select>
-                            </a-col>
-                            <a-col span={8}>
-                                <a-button onClick={this.handleFetchCommitList}><a-icon type="sync" spin={this.fetching} /> { this.fetchBtnTitle }</a-button>
-                            </a-col>
-                        </a-row>
+                        <div>
+                            <a-select
+                            showSearch
+                            placeholder="关键词搜索"
+                            notFoundContent={this.fetching ? undefined : '未找到数据'}
+                            onChange={this.handleSelectCommit}
+                            defaultActiveFirstOption={false}
+                            style={{ width: '100%' }}>
+                                { this.fetching ? (
+                                    <a-spin slot="notFoundContent" size="small"/>
+                                ): '' }
+                                {renderCommitListOpts()}
+                            </a-select>
+                            <a-button onClick={this.handleFetchCommitList}><a-icon type="sync" spin={this.fetching} /> { this.fetchBtnTitle }</a-button>
+                            <div style="line-height: 1; margin-top: 10px;">{ getFieldValue('commit') }</div>
+                        </div>
                     </a-form-item>
-                ) : (
+                ) : ''}
+                {this.projectDetail.repo_mode == 2 ? (
                     <a-form-item
                     {...{ props: formItemLayout }}
                     label='选择上线Tag'>
@@ -99,7 +99,6 @@ const UpdateApply = {
                                 <a-select
                                 showSearch
                                 placeholder="关键词搜索"
-                                filterOption={false}
                                 notFoundContent={this.fetching ? undefined : '未找到数据'}
                                 onChange={this.handleSelectTags}
                                 defaultActiveFirstOption={false}
@@ -115,7 +114,7 @@ const UpdateApply = {
                             </a-col>
                         </a-row>
                     </a-form-item>
-                )}
+                ) : ''}
                 <a-form-item
                 {...{ props: formItemLayout }}
                 help={this.nameHelp}
@@ -146,8 +145,8 @@ const UpdateApply = {
         }
     },
     methods: {
-        handleSelectCommit() {
-
+        handleSelectCommit(val) {
+            this.form.setFieldsValue({commit: val})
         },
         handleSelectTags(val) {
             this.form.setFieldsValue({tag: val})
@@ -155,7 +154,7 @@ const UpdateApply = {
         handleFetchCommitList() {
             this.fetching = true
             this.fetchBtnTitle = '列表拉取中...'
-            getRepoTagListApi({id: this.projectId}).then(res => {
+            getRepoCommitListApi({id: this.projectId}).then(res => {
                 this.fetching = false
                 this.commitList = res.list
                 this.fetchBtnTitle = '列表拉取成功'

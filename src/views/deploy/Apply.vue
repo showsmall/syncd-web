@@ -55,6 +55,7 @@
 
 <script>
 import { getSpaceListApi, listProjectApi } from '@/api/project.js'
+import { submitApplyApi } from '@/api/deploy.js'
 import ApplyUpdateComponent from './ApplyUpdateComponent.js'
 export default {
     data() {
@@ -110,7 +111,22 @@ export default {
                 if (err) {
                     return
                 }
-                console.log(values)
+                this.dialogConfirmLoading = true
+                submitApplyApi(values).then(res => {
+                    this.dialogConfirmLoading = false
+                    this.$success({
+                        title: '提交成功',
+                        okText: "确定",
+                        content: (
+                            <div>恭喜，上线申请提交成功，点击确定返回上线单列表</div>
+                        ),
+                        onOk: () => {
+                            this.$root.GotoRouter('deployDeploy')
+                        }
+                    });
+                }).catch(err => {
+                    this.dialogConfirmLoading = false
+                })
             })
         },
         dialogCancel() {
@@ -118,7 +134,7 @@ export default {
         },
         loadProjectList(spaceId) {
             this.fetchingProject = true
-            listProjectApi({space_id: spaceId}).then(res => {
+            listProjectApi({space_id: spaceId, status: 1}).then(res => {
                 this.fetchingProject = false
                 this.projectList = res.list
             }).catch(err => {

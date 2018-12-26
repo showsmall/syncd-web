@@ -11,3 +11,11 @@ export function resetRepoApi(data) {
 export function getRepoCommitListApi(params) {
     return get('/deploy/repo/commitlist', params)
 }
+
+export function submitApplyApi(data) {
+    return post('/deploy/apply/submit', data)
+}
+
+export function getApplyListApi(params) {
+    return get('/deploy/apply/list', params)
+}
