@@ -1,5 +1,9 @@
 import moment from 'moment'
 import md5 from 'blueimp-md5'
+import Cookies from 'js-cookie'
+
+let loginTokenKey = 'SYD_AUTH_TOKEN'
+
 export default {
 
     GotoRouter(name, query) {
@@ -48,5 +52,17 @@ export default {
         if (pagination.current > maxPage) {
             pagination.current = maxPage
         }
+    },
+
+    SetLoginToken(token) {
+        return Cookies.set(loginTokenKey, token)
+    },
+
+    GetLoginToken() {
+        return Cookies.get(loginTokenKey)
+    },
+
+    DeleteLoginToken() {
+        return Cookies.remove(loginTokenKey)
     },
 }

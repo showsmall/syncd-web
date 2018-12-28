@@ -43,3 +43,15 @@ export function deleteUserApi(data) {
 export function searchUserApi(params) {
     return get('/user/search', params)
 }
+
+export function loginApi(data) {
+    return post('/user/login', data)
+}
+
+export function logoutApi() {
+    return post('/user/logout')
+}
+
+export function loginStatusApi() {
+    return get('/user/login/status')
+}

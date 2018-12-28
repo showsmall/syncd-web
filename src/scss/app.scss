@@ -130,6 +130,9 @@
         color: #40a9ff;
     }
 }
+.app-cursor {
+    cursor: pointer;
+}
 .app-color-success {
     color: #52c41a;
 }
@@ -140,7 +143,7 @@
     color: #1890ff;
 }
 .app-color-warning {
-    color: #faad14;
+    color: #e6a23c;
 }
 .app-color-gray {
     color: #999;
@@ -206,4 +209,37 @@
 }
 .app-small-text {
     font-size: 12px;
+}
+.app-login {
+    width: 100%;
+    height: 100%;
+    background-image: url('../assets/login_bg.jpg');
+    background-position: 50%;
+    background-size: cover;
+    .app-login-inner {
+        width: 100%;
+        height: 100%;
+    }
+    .login-container {
+        display: flex;
+        justify-content: center;
+        .login-box {
+            margin-top: 20vh;
+            width: 30vw;
+            .login-title {
+                font-weight: 500;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+        }
+    }
+    .login-cpy {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        color: #fff;
+        a {
+            margin: 0 5px;
+        }
+    }
 }

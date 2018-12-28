@@ -2,6 +2,9 @@ import axios from 'axios'
 import qs from 'qs'
 import Vue from 'vue'
 
+import Code from './code.js'
+import Router from '@/router'
+
 let API_URL = 'http://localhost:8868/api'
 let CancelToken = axios.CancelToken
 let source = CancelToken.source()
@@ -10,7 +13,8 @@ Vue.prototype.$CancelAjaxRequet = function() {}
 
 const service = axios.create({
     baseURL: API_URL + '/',
-    timeout: 30000
+    timeout: 30000,
+    withCredentials: true,
 });
 
 service.interceptors.request.use(config => {
@@ -24,11 +28,21 @@ service.interceptors.response.use(response => {
     if (!res) {
         res = {
             code: -1,
-            message: 'Network Error',
+            message: '网络错误',
         }
     }
     if (res.code != 0) {
-        Vue.prototype.$message.error(res.message)
+        switch (res.code) {
+            case Code.CODE_ERR_SYSTEM:
+            case Code.CODE_ERR_APP:
+            case Code.CODE_ERR_PARAM:
+                Vue.prototype.$message.error(res.message)
+                break
+            case Code.CODE_ERR_NO_PRIV:
+                Vue.prototype.$message.error('无操作权限')
+                Router.push({name: 'dashboard'})
+                break
+        }
         return Promise.reject(res)
     }
     return res.data;
@@ -36,7 +50,7 @@ service.interceptors.response.use(response => {
     if (!axios.isCancel(error)) {
         let res = {
             code: -1,
-            message: error.message ? error.message : 'Unknown Error',
+            message: error.message ? error.message : '未知错误',
         }
         Vue.prototype.$message.error(res.message)
         return Promise.reject(res)
@@ -48,7 +62,6 @@ export function post(url, data, params, headers) {
     if (!params) {
         params = {}
     }
-    //params._token = Util.LoginToken()
     params._t = new Date().getTime()
     let config = {
         method: 'post',
@@ -79,7 +92,6 @@ export function get(url, params, headers) {
     if (!params) {
         params = {}
     }
-    //params._token = Util.LoginToken()
     params._t = new Date().getTime()
     let config = {
         method: 'get',

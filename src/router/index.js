@@ -5,6 +5,14 @@ Vue.use(Router)
 
 const _import = file => () => import('../views/' + file + '.vue')
 
+const appMap = [
+    {
+        path: '/login',
+        name: 'login',
+        component: _import('Login'),
+    },
+]
+
 const routerMap = [
     {
         path: '/',
@@ -12,6 +20,7 @@ const routerMap = [
         meta: {
             single: true,
         },
+        redirect: { name: 'dashboard' },
         children: [
             {
                 path: 'dashboard',
@@ -38,14 +47,16 @@ const routerMap = [
                 name: 'deployApply',
                 meta: {
                     title: '提交上线申请',
+                    role: 1001,
                 },
                 component: _import('deploy/Apply'),
             },
             {
-                path: 'pending',
-                name: 'deployPending',
+                path: 'deploy',
+                name: 'deployDeploy',
                 meta: {
                     title: '上线单管理',
+                    role: 1002,
                 },
                 component: _import('deploy/Deploy'),
             },
@@ -65,6 +76,7 @@ const routerMap = [
                 name: 'projectSpace',
                 meta: {
                     title: '项目空间',
+                    role: 2001,
                 },
                 component: _import('project/Space'),
             },
@@ -74,6 +86,7 @@ const routerMap = [
                 meta: {
                     title: '项目管理',
                     hide: true,
+                    role: 2201,
                 },
                 component: _import('project/Project'),
             },
@@ -83,6 +96,7 @@ const routerMap = [
                 meta: {
                     title: '成员管理',
                     hide: true,
+                    role: 2100,
                 },
                 component: _import('project/User'),
             },
@@ -102,6 +116,7 @@ const routerMap = [
                 name: 'userGroup',
                 meta: {
                     title: '角色管理',
+                    role: 3001,
                 },
                 component: _import('user/Group'),
             },
@@ -110,6 +125,7 @@ const routerMap = [
                 name: 'userList',
                 meta: {
                     title: '用户管理',
+                    role: 3101,
                 },
                 component: _import('user/User'),
             },
@@ -129,6 +145,7 @@ const routerMap = [
                 name: 'serverGroup',
                 meta: {
                     title: '集群管理',
+                    role: 4001,
                 },
                 component: _import('server/Group'),
             },
@@ -137,6 +154,7 @@ const routerMap = [
                 name: 'serverList',
                 meta: {
                     title: '服务器管理',
+                    role: 4101,
                 },
                 component: _import('server/Server'),
             },
@@ -184,7 +202,7 @@ const routerMap = [
 ]
 
 const router = new Router({
-    routes: routerMap,
+    routes: appMap.concat(routerMap),
     scrollBehavior: () => ({ y: 0 }),
     mode: 'history',
 })

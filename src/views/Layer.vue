@@ -42,40 +42,38 @@
                     <IconMenuUnfold v-else />
                 </div>
                 <div class="header-right">
-
-                    <a-dropdown ref="avatarDropdownRef" :trigger="['click']" class="dropdown">
+                    <a-dropdown :trigger="['click']" class="dropdown">
                         <span class="ant-dropdown-link" href="#">
                             <icon-question class="icon" />
                             <icon-caret-down class="icon-small" />
                         </span>
                         <a-menu slot="overlay" class="menu-wide">
                             <a-menu-item>
-                                <span>帮助</span>
+                                <a href="https://github.com/tinystack/syncd/issues" target="_blank">帮助</a>
                             </a-menu-item>
                             <a-menu-item>
-                                <span>为Syncd做贡献</span>
+                                <a href="https://github.com/tinystack/syncd" target="_blank">为Syncd做贡献</a>
                             </a-menu-item>
                         </a-menu>
                     </a-dropdown>
-
-                    <a-dropdown ref="avatarDropdownRef" :trigger="['click']" class="dropdown">
+                    <a-dropdown :trigger="['click']" class="dropdown">
                         <span class="ant-dropdown-link" href="#">
                             <a-avatar shape="square" size="small" :src="userAvatar">{{ userName }}</a-avatar>
                             <icon-caret-down class="icon-small" />
                         </span>
                         <a-menu slot="overlay" class="menu-wide">
                             <a-menu-item class="pure-text">
-                                <strong>Dreamans</strong>
+                                <strong>{{ userName }}</strong>
                             </a-menu-item>
                             <a-menu-divider />
-                            <a-menu-item>
-                                <span><icon-user /> 个人主页</span>
-                            </a-menu-item>
                             <a-menu-item>
                                 <span><icon-setting /> 个人设置</span>
                             </a-menu-item>
-                            <a-menu-divider />
                             <a-menu-item>
+                                <span><a-icon type="key" /> 修改密码</span>
+                            </a-menu-item>
+                            <a-menu-divider />
+                            <a-menu-item @click="handleLogout">
                                 <span><icon-logout /> 退出登录</span>
                             </a-menu-item>
                         </a-menu>
@@ -98,19 +96,26 @@
 
 <script>
 import { routerMap } from '@/router'
+import { loginStatusApi, logoutApi } from '@/api/user.js'
 export default {
     data(){
         return {
             collapsed: false,
             openKeys: [],
             selectedKeys: [],
-            userAvatar: 'https://avatars2.githubusercontent.com/u/3644570',
-            userName: 'D',
-
             breadCrumb: [],
         }
     },
     computed: {
+        userAvatar() {
+            return this.$store.getters['account/getAvatar']
+        },
+        userName() {
+            return this.$store.getters['account/getUserName']
+        },
+        userPriv() {
+            return this.$store.getters['account/getPriv']
+        },
         appMenu() {
             let newRouterMap = []
             routerMap.forEach(first => {
@@ -121,13 +126,18 @@ export default {
                 }
                 first.children.forEach(second => {
                     if (!second.meta.hide || this.$route.name == second.name) {
+                        if (second.meta.role && this.userPriv.indexOf(second.meta.role) == -1) {
+                            return
+                        }
                         item.children.push({
                             name: second.name,
                             meta: second.meta,
                         })
                     }
                 })
-                newRouterMap.push(item)
+                if (item.children.length > 0) {
+                    newRouterMap.push(item)
+                }
             })
             return newRouterMap
         },
@@ -151,6 +161,15 @@ export default {
         },
     },
     methods: {
+        handleLogout() {
+            logoutApi().then(res => {
+                this.$root.DeleteLoginToken()
+                this.$root.GotoRouter('login')
+            }).catch(err => {
+                this.$root.DeleteLoginToken()
+                this.$root.GotoRouter('login')
+            })
+        },
         handleCollapsed() {
             if (!this.collapsed) {
                 this.openKeys = []
@@ -195,9 +214,22 @@ export default {
             this.menuSelect(this.$route.name)
             this.handleOpenChange(this.defaultOpenKeys)
         },
+        initLoginStatus() {
+            loginStatusApi().then(res => {
+                if (!res.is_login) {
+                    this.$root.GotoRouter('login')
+                } else {
+                    this.$store.dispatch('account/login', {user_id: res.user_id, name: res.name, email: res.email, priv: res.priv})
+                }
+            }).catch(err => {
+                this.$message.warning('用户未登录', 1)
+                this.$root.GotoRouter('login')
+            })
+        },
     },
     mounted() {
         this.initMenuSelectStatus()
+        this.initLoginStatus()
     },
 }
 </script>
