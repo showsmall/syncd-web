@@ -1,5 +1,9 @@
 import {get, post} from './fetch.js'
 
+export function newGroupApi(data) {
+    return post('/user/group/new', data)
+}
+
 export function updateGroupApi(data) {
     return post('/user/group/update', data)
 }
@@ -18,6 +22,10 @@ export function deleteGroupApi(data) {
 
 export function getPrivListApi() {
     return get('/user/priv/list')
+}
+
+export function newUserApi(data) {
+    return post('/user/new', data)
 }
 
 export function updateUserApi(data) {

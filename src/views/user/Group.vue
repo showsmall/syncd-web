@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { updateGroupApi, getGroupListApi, getGroupDetailApi, deleteGroupApi } from '@/api/user.js'
+import { newGroupApi, updateGroupApi, getGroupListApi, getGroupDetailApi, deleteGroupApi } from '@/api/user.js'
 import GroupUpdateComponent from './GroupUpdateComponent.js'
 export default {
     data () {
@@ -115,16 +115,28 @@ export default {
                     return
                 }
                 this.dialogConfirmLoading = true
-                updateGroupApi(values).then(res => {
-                    let msg = this.dialogDetail.id ? '角色信息更新成功': '角色信息创建成功'
-                    this.$message.success(msg, 1, () => {
-                        this.dialogCancel()
+                if (this.dialogDetail.id) {
+                    updateGroupApi(values).then(res => {
+                        this.$message.success('角色信息更新成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
                         this.dialogConfirmLoading = false
-                        this.handleTableChange(this.pagination)
                     })
-                }).catch(err => {
-                    this.dialogConfirmLoading = false
-                })
+                } else {
+                    newGroupApi(values).then(res => {
+                        this.$message.success('角色信息创建成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
+                        this.dialogConfirmLoading = false
+                    })
+                }
+
             })
         },
         dialogCancel() {

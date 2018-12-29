@@ -5,7 +5,8 @@ import store from './store'
 import jQuery from 'jquery'
 import moment from 'moment'
 import AntDesignVue from 'ant-design-vue'
-import util from './util'
+import util from './util/index.js'
+import data from './util/data.js'
 
 import 'ant-design-vue/dist/antd.css'
 import './scss/antd.scss'
@@ -26,5 +27,6 @@ new Vue({
   router,
   store,
   methods: util,
+  data: data,
   render: h => h(App)
 }).$mount('#app')

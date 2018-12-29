@@ -65,4 +65,8 @@ export default {
     DeleteLoginToken() {
         return Cookies.remove(loginTokenKey)
     },
+
+    CheckPriv(code) {
+        return this.$store.getters['account/getPriv'].indexOf(code) > -1
+    },
 }

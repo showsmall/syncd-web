@@ -40,7 +40,7 @@ service.interceptors.response.use(response => {
                 break
             case Code.CODE_ERR_NO_PRIV:
                 Vue.prototype.$message.error('无操作权限')
-                Router.push({name: 'dashboard'})
+                //Router.push({name: 'dashboard'})
                 break
         }
         return Promise.reject(res)

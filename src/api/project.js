@@ -1,5 +1,9 @@
 import {get, post} from './fetch.js'
 
+export function newProjectApi(data) {
+    return post('/project/new', data)
+}
+
 export function updateProjectApi(data) {
     return post('/project/update', data)
 }
@@ -22,6 +26,10 @@ export function changeProjectStatusApi(data) {
 
 export function getSpaceListApi(params) {
     return get('/project/space/list', params)
+}
+
+export function newSpaceApi(data) {
+    return post('/project/space/new', data)
 }
 
 export function updateSpaceApi(data) {

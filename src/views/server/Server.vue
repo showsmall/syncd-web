@@ -65,7 +65,7 @@
 
 <script>
 import ServerUpdateComponent from './ServerUpdateComponent.js'
-import { updateServerApi, getServerListApi, getServerDetailApi, deleteServerApi, getGroupListApi } from '@/api/server.js'
+import { newServerApi, updateServerApi, getServerListApi, getServerDetailApi, deleteServerApi, getGroupListApi } from '@/api/server.js'
 export default {
     data() {
         return {
@@ -150,16 +150,27 @@ export default {
                     return
                 }
                 this.dialogConfirmLoading = true
-                updateServerApi(values).then(res => {
-                    let msg = this.dialogDetail.id ? '服务器信息更新成功': '服务器信息创建成功'
-                    this.$message.success(msg, 1, () => {
-                        this.dialogCancel()
+                if (this.dialogDetail.id) {
+                    updateServerApi(values).then(res => {
+                        this.$message.success('服务器信息更新成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
                         this.dialogConfirmLoading = false
-                        this.handleTableChange(this.pagination)
                     })
-                }).catch(err => {
-                    this.dialogConfirmLoading = false
-                })
+                } else {
+                    newServerApi(values).then(res => {
+                        this.$message.success('服务器信息创建成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
+                        this.dialogConfirmLoading = false
+                    })
+                }
             })
         },
         getDataDetail(id) {

@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { getSpaceListApi, updateSpaceApi, getSpaceDetailApi, deleteSpaceApi } from '@/api/project.js'
+import { getSpaceListApi, updateSpaceApi, newSpaceApi, getSpaceDetailApi, deleteSpaceApi } from '@/api/project.js'
 import SpaceUpdateComponent from './SpaceUpdateComponent.js'
 export default {
     components: {
@@ -133,16 +133,27 @@ export default {
                     return
                 }
                 this.dialogConfirmLoading = true
-                updateSpaceApi(values).then(res => {
-                    let msg = this.dialogDetail.id ? '更新项目空间成功' : '新增项目空间成功'
-                    this.$message.success(msg, 1, () => {
-                        this.dialogCancel()
+                if (this.dialogDetail.id) {
+                    updateSpaceApi(values).then(res => {
+                        this.$message.success('更新项目空间成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
                         this.dialogConfirmLoading = false
-                        this.handleTableChange(this.pagination)
                     })
-                }).catch(err => {
-                    this.dialogConfirmLoading = false
-                })
+                } else {
+                    newSpaceApi(values).then(res => {
+                        this.$message.success('新增项目空间成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
+                        this.dialogConfirmLoading = false
+                    })
+                }
             })
         },
         dialogCancel() {

@@ -22,7 +22,7 @@
             :loading="tableLoading">
                 <span slot="op" slot-scope="text, record">
                     <span @click="handleShowServerList(record.id)" class="app-link app-op"><a-icon type="bars" />服务器列表</span>
-                    <span @click="handleOpenEditGroupDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
+                    <span v-if="$root.CheckPriv($root.Priv.SERVER_GROUP_EDIT)" @click="handleOpenEditGroupDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
                     <a-popconfirm title="确定要删除此分组吗？" @confirm="handleDeleteGroup(record.id)" okText="删除" cancelText="取消">
                         <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
                     </a-popconfirm>
@@ -49,7 +49,7 @@
 
 <script>
 import GroupUpdateComponent from './GroupUpdateComponent.js'
-import { updateGroupApi, getGroupListApi, getGroupDetailApi, deleteGroupApi, getServerListApi } from '@/api/server.js'
+import { newGroupApi, updateGroupApi, getGroupListApi, getGroupDetailApi, deleteGroupApi, getServerListApi } from '@/api/server.js'
 export default {
     data() {
         return {
@@ -148,16 +148,27 @@ export default {
                     return
                 }
                 this.dialogConfirmLoading = true
-                updateGroupApi(values).then(res => {
-                    let msg = this.dialogDetail.id ? '集群更新成功': '集群创建成功'
-                    this.$message.success(msg, 1, () => {
-                        this.dialogCancel()
+                if (this.dialogDetail.id) {
+                    updateGroupApi(values).then(res => {
+                        this.$message.success('集群更新成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
                         this.dialogConfirmLoading = false
-                        this.handleTableChange(this.pagination)
                     })
-                }).catch(err => {
-                    this.dialogConfirmLoading = false
-                })
+                } else {
+                    newGroupApi(values).then(res => {
+                        this.$message.success('集群创建成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
+                        this.dialogConfirmLoading = false
+                    })
+                }
             })
         },
         getDataDetail(id) {

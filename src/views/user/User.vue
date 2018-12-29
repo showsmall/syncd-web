@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { updateUserApi, getUserListApi, getUserDetailApi, deleteUserApi } from '@/api/user.js'
+import { newUserApi, updateUserApi, getUserListApi, getUserDetailApi, deleteUserApi } from '@/api/user.js'
 import UserUpdateComponent from './UserUpdateComponent.js'
 export default {
     data () {
@@ -143,16 +143,27 @@ export default {
                     values.password = this.$root.Md5Sum(values.password)
                 }
                 values.lock_status = values.lock_status ? 1: 0
-                updateUserApi(values).then(res => {
-                    let msg = this.dialogDetail.id ? '用户信息更新成功': '用户创建成功'
-                    this.$message.success(msg, 1, () => {
-                        this.dialogCancel()
+                if (this.dialogDetail.id) {
+                    updateUserApi(values).then(res => {
+                        this.$message.success('用户信息更新成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
                         this.dialogConfirmLoading = false
-                        this.handleTableChange(this.pagination)
                     })
-                }).catch(err => {
-                    this.dialogConfirmLoading = false
-                })
+                } else {
+                    newUserApi(values).then(res => {
+                        this.$message.success('用户创建成功', 1, () => {
+                            this.dialogCancel()
+                            this.dialogConfirmLoading = false
+                            this.handleTableChange(this.pagination)
+                        })
+                    }).catch(err => {
+                        this.dialogConfirmLoading = false
+                    })
+                }
             })
         },
         dialogCancel() {

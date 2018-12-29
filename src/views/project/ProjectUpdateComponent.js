@@ -1,5 +1,5 @@
 import { Form } from 'ant-design-vue'
-import { updateProjectApi, getProjectApi, checkProjectNameExistsApi } from '@/api/project.js'
+import { newProjectApi, updateProjectApi, getProjectApi, checkProjectNameExistsApi } from '@/api/project.js'
 import { getGroupListApi } from '@/api/server.js'
 const UpdateProject = {
     render() {
@@ -350,19 +350,33 @@ const UpdateProject = {
                 postData.id = this.projectId
                 postData.need_audit = postData.need_audit ? 1: 0
                 postData.deploy_server = this.filterInvalidServerGroup(postData.deploy_server)
-                updateProjectApi(postData).then(res => {
-                    let opMsg = this.projectId ? '更新成功': '新增成功'
-                    this.$success({
-                        title: opMsg,
-                        okText: "确定",
-                        content: (
-                            <div>恭喜，项目{opMsg}，点击确定返回项目列表</div>
-                        ),
-                        onOk: () => {
-                            this.$emit('close')
-                        }
-                    });
-                })
+                if (this.projectId) {
+                    updateProjectApi(postData).then(res => {
+                        this.$success({
+                            title: '更新成功',
+                            okText: "确定",
+                            content: (
+                                <div>恭喜，项目更新成功，点击确定返回项目列表</div>
+                            ),
+                            onOk: () => {
+                                this.$emit('close')
+                            }
+                        });
+                    })
+                } else {
+                    newProjectApi(postData).then(res => {
+                        this.$success({
+                            title: '新增成功',
+                            okText: "确定",
+                            content: (
+                                <div>恭喜，项目新增成功，点击确定返回项目列表</div>
+                            ),
+                            onOk: () => {
+                                this.$emit('close')
+                            }
+                        });
+                    })
+                }
             })
         },
         handleServerSelect(value) {
