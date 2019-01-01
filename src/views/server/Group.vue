@@ -193,14 +193,7 @@ export default {
         },
     },
     mounted() {
-        let op = this.$route.query.op
-        let id = this.$route.query.id
-        if (op == 'view' && id > 0) {
-            this.handleSearch(id)
-            this.handleShowServerList(id)
-        } else {
-            this.handleTableChange(this.pagination)
-        }
+        this.handleTableChange(this.pagination)
     },
 }
 </script>

@@ -10,6 +10,17 @@
             :pagination="pagination"
             @change="handleTableChange"
             :loading="tableLoading">
+                <span class="app-cursor" slot="user_name" slot-scope="text, record">
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                            <span>{{ record.user_email }}</span>
+                        </template>
+                        {{ record.user_name }}
+                    </a-tooltip>
+                </span>
+                <span slot="project_name" slot-scope="text, record">
+                    {{ record.space_name }} <a-icon class="app-color-gray" type="right" /> {{ record.project_name }}
+                </span>
                 <span :class="rowClassName(record.status)" slot="name" slot-scope="text,record">
                     {{ text }}
                 </span>
@@ -52,20 +63,33 @@
                 </span>
             </a-table>
         </a-card>
+
+        <a-modal
+        title="查看上线单"
+        :visible="dialogVisible"
+        :confirmLoading="dialogConfirmLoading"
+        :destroyOnClose="true"
+        width="50%"
+        :footer="null"
+        @cancel="dialogCancel">
+            <apply-view-component :detail="applyDetail"></apply-view-component>
+        </a-modal>
+
     </div>
 </template>
 
 <script>
-import { getApplyListApi } from '@/api/deploy.js'
+import { getApplyListApi, getApplyDetailApi } from '@/api/deploy.js'
+import ApplyViewComponent from './ApplyViewComponent.js'
 export default {
     data() {
         return {
             tableColumns: [
-                {dataIndex: "id", title: 'ID', width: '10%'},
+                {dataIndex: "id", title: 'ID', width: '6%'},
                 {dataIndex: "name", title: '上线单名称', scopedSlots: { customRender: 'name' }},
-                {dataIndex: "project_name", title: '项目名称', width: '20%'},
-                {dataIndex: "space_name", title: '空间名称', width: '15%'},
+                {dataIndex: "project_name", title: '空间名称/项目名称', width: '30%', scopedSlots: { customRender: 'project_name' }},
                 {dataIndex: "ctime", title: '提交时间', width: '10%', scopedSlots: { customRender: 'ctime' }},
+                {dataIndex: "user_name", title: '提交者', width: '10%', scopedSlots: { customRender: 'user_name' }},
                 {dataIndex: "status", title: '状态', width: '12%', scopedSlots: { customRender: 'status' }},
                 {dataIndex: "op", title: '操作', width: '10%', align: 'right', scopedSlots: { customRender: 'op' }},
             ],
@@ -79,7 +103,14 @@ export default {
             search: {
                 keyword: '',
             },
+
+            dialogVisible: false,
+            dialogConfirmLoading: false,
+            applyDetail: {},
         }
+    },
+    components: {
+        ApplyViewComponent,
     },
     methods: {
         handleTableChange(pagination) {
@@ -91,6 +122,22 @@ export default {
         },
         handleMenuClick({key}, id) {
             console.log(key, id)
+            switch (key) {
+                case 'view':
+                    this.handleShowView(id)
+                    break
+            }
+        },
+        handleShowView(id) {
+            this.dialogVisible = true
+            this.dialogConfirmLoading = true
+            getApplyDetailApi({id}).then(res => {
+                this.dialogConfirmLoading = false
+                this.applyDetail = res
+            })
+        },
+        dialogCancel() {
+            this.dialogVisible = false
         },
         rowClassName(status) {
             let className = ''

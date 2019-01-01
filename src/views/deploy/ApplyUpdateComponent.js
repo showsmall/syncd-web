@@ -1,6 +1,5 @@
 import { Form } from 'ant-design-vue'
-import { getProjectApi } from '@/api/project.js'
-import { getRepoTagListApi, getRepoCommitListApi } from '@/api/deploy.js'
+import { getRepoTagListApi, getRepoCommitListApi, getApplyProjectDetailApi } from '@/api/deploy.js'
 const UpdateApply = {
     render() {
         const { getFieldDecorator, getFieldValue } = this.form
@@ -31,6 +30,11 @@ const UpdateApply = {
         })
         return (
             <a-form>
+                <a-form-item
+                {...{ props: formItemLayout }}
+                label='项目名称'>
+                    {this.projectDetail.name}
+                </a-form-item>
                 <a-form-item
                 {...{ props: formItemLayout }}
                 label='上线单名称'>
@@ -176,7 +180,7 @@ const UpdateApply = {
             })
         },
         loadProjectDetail() {
-            getProjectApi({id: this.projectId}).then(res => {
+            getApplyProjectDetailApi({id: this.projectId}).then(res => {
                 this.projectDetail = res
             })
         },

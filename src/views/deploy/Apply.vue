@@ -54,8 +54,7 @@
 </template>
 
 <script>
-import { getSpaceListApi, listProjectApi } from '@/api/project.js'
-import { submitApplyApi } from '@/api/deploy.js'
+import { getApplySpaceList, submitApplyApi, getApplyProjectList } from '@/api/deploy.js'
 import ApplyUpdateComponent from './ApplyUpdateComponent.js'
 export default {
     data() {
@@ -63,14 +62,11 @@ export default {
             fetchingSpace: false,
             spaceList: [],
             selectedSpaceId: undefined,
-
             fetchingProject: false,
             projectList: [],
             selectedProjectId: undefined,
-
             dialogVisible: false,
             dialogConfirmLoading: false,
-
         }
     },
     components: {
@@ -134,16 +130,19 @@ export default {
         },
         loadProjectList(spaceId) {
             this.fetchingProject = true
-            listProjectApi({space_id: spaceId, status: 1}).then(res => {
+            getApplyProjectList({space_id: spaceId, status: 1}).then(res => {
                 this.fetchingProject = false
                 this.projectList = res.list
+                if (!res.list) {
+                    this.$message.warning('该空间下无可用项目')
+                }
             }).catch(err => {
                 this.fetchingProject = false
             })
         },
         loadSpaceList() {
             this.fetchingSpace = true
-            getSpaceListApi().then(res => {
+            getApplySpaceList().then(res => {
                 this.fetchingSpace = false
                 this.spaceList = res.list
             }).catch(err => {

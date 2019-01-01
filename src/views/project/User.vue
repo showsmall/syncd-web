@@ -68,8 +68,7 @@
 </template>
 
 <script>
-import { getSpaceDetailApi, addSpaceUserApi, getSpaceUserListApi, removeSpaceUserApi } from '@/api/project.js'
-import { searchUserApi } from '@/api/user.js'
+import { getSpaceDetailApi, addSpaceUserApi, getSpaceUserListApi, removeSpaceUserApi, searchSpaceUserApi } from '@/api/project.js'
 export default {
     data () {
         return {
@@ -102,7 +101,7 @@ export default {
             vm.searchFetching = true
             vm.searchUserList = []
             vm.searchUserTimer = setTimeout(function() {
-                searchUserApi({keyword: value}).then(res => {
+                searchSpaceUserApi({keyword: value}).then(res => {
                     vm.searchUserList = res.list
                     vm.searchFetching = false
                 }).catch(err => {
@@ -119,6 +118,7 @@ export default {
                 this.selectedUser = undefined
                 this.handleTableChange(this.pagination)
             }).catch(err => {
+                this.$message.error('用户添加失败, ' + err.message);
                 this.selectedUser = undefined
             })
             this.searchUserList = []

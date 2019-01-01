@@ -86,9 +86,8 @@
 </template>
 
 <script>
-import { listProjectApi, deleteProjectApi, getSpaceDetailApi, changeProjectStatusApi } from '@/api/project.js'
+import { resetRepoApi, listProjectApi, deleteProjectApi, getSpaceDetailApi, changeProjectStatusApi } from '@/api/project.js'
 import { getGroupMultiApi } from '@/api/server.js'
-import { resetRepoApi } from '@/api/deploy.js'
 import ProjectViewComponent from './ProjectViewComponent.js'
 import ProjectUpdateComponent from './ProjectUpdateComponent.js'
 export default {
@@ -165,7 +164,7 @@ export default {
         },
         handleResetRepo(id) {
             const hideLoading = this.$message.loading('代码仓库重置中，请不要离开此页面...', 0);
-            resetRepoApi({project_id: id}).then(res => {
+            resetRepoApi({id}).then(res => {
                 hideLoading()
                 setTimeout(() => {
                     this.$message.success("代码仓库重置成功")

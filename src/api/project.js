@@ -53,13 +53,21 @@ export function checkProjectNameExistsApi(params) {
 }
 
 export function addSpaceUserApi(data) {
-    return post('/project/space/user/add', data)
+    return post('/project/user/add', data)
 }
 
 export function getSpaceUserListApi(params) {
-    return get('/project/space/user/list')
+    return get('/project/user/list')
 }
 
 export function removeSpaceUserApi(data) {
-    return post('/project/space/user/remove', data)
+    return post('/project/user/remove', data)
+}
+
+export function searchSpaceUserApi(data) {
+    return get('/project/user/search', data)
+}
+
+export function resetRepoApi(data) {
+    return post('/project/repo/reset', data)
 }

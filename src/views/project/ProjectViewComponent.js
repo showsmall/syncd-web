@@ -1,6 +1,5 @@
 import { Form } from 'ant-design-vue'
 import { getProjectApi } from '@/api/project.js'
-import { getGroupMultiApi } from '@/api/server.js'
 const ViewProject = {
     render() {
         const formItemLayout = {
@@ -99,17 +98,15 @@ const ViewProject = {
                                     r.push(
                                         <a-tooltip placement="top" >
                                             <template slot="title">
-                                                <span>点击可查看服务器列表</span>
+                                                <span>集群ID: {g.id}, 集群名称: {g.name}</span>
                                             </template>
-                                            <a href={`/server/group?op=view&id=${g.id}`} target="_blank">
-                                                <a-tag><a-icon type="cluster" /> {g.name}</a-tag>
-                                            </a>
+                                            <a-tag><a-icon type="cluster" /> {g.name}</a-tag>
                                         </a-tooltip>
                                     )
                                 })
                             }
                             return r
-                        }(this.detail.server_group) }
+                        }(this.detail.deploy_servers) }
                     </a-form-item>
                     <a-form-item
                     label='用户'
@@ -161,11 +158,6 @@ const ViewProject = {
             getProjectApi({id}).then(res => {
                 this.loading = false
                 this.detail = res
-                if (res.deploy_server.length > 0) {
-                    getGroupMultiApi({ids: res.deploy_server.join(",")}).then(res => {
-                        this.$set(this.detail, 'server_group', res.list)
-                    })
-                }
             })
         }
     },

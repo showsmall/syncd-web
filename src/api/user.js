@@ -21,7 +21,7 @@ export function deleteGroupApi(data) {
 }
 
 export function getPrivListApi() {
-    return get('/user/priv/list')
+    return get('/user/group/priv')
 }
 
 export function newUserApi(data) {
@@ -41,7 +41,7 @@ export function getUserDetailApi(params) {
 }
 
 export function checkUserExistsApi(params) {
-    return get('/user/exists', params)
+    return get('/user/checkexists', params)
 }
 
 export function deleteUserApi(data) {
