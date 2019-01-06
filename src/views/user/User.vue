@@ -6,7 +6,7 @@
             <div class="app-btn-group">
                 <a-row :gutter="10">
                     <a-col :span="4">
-                        <a-button @click="handleOpenAddDialog" type="primary" icon="plus">新增用户</a-button>
+                        <a-button v-if="$root.CheckPriv($root.Priv.USER_NEW)" @click="handleOpenAddDialog" type="primary" icon="plus">新增用户</a-button>
                     </a-col>
                     <a-col :span="12"></a-col>
                     <a-col :span="8">
@@ -42,8 +42,8 @@
                     </template>
                 </span>
                 <span slot="op" slot-scope="text, record">
-                    <span  @click="handleOpenEditDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
-                    <a-popconfirm title="确定要删除此用户吗？" @confirm="handleDeleteUser(record.id)" okText="删除" cancelText="取消">
+                    <span v-if="$root.CheckPriv($root.Priv.USER_EDIT)" @click="handleOpenEditDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
+                    <a-popconfirm v-if="$root.CheckPriv($root.Priv.USER_DEL)" title="确定要删除此用户吗？" @confirm="handleDeleteUser(record.id)" okText="删除" cancelText="取消">
                         <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
                     </a-popconfirm>
                 </span>

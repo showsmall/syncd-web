@@ -49,28 +49,10 @@ const ViewProject = {
                     </a-form-item>
                     <a-divider></a-divider>
                     <a-form-item
-                    label='代码仓库类型'
-                    labelCol={formItemLayout.labelCol}
-                    wrapperCol={formItemLayout.wrapperCol}>
-                        {this.detail.repo}
-                    </a-form-item>
-                    <a-form-item
                     label='代码仓库地址'
                     labelCol={formItemLayout.labelCol}
                     wrapperCol={formItemLayout.wrapperCol}>
                         {this.detail.repo_url}
-                    </a-form-item>
-                    <a-form-item
-                    label='用户名'
-                    labelCol={formItemLayout.labelCol}
-                    wrapperCol={formItemLayout.wrapperCol}>
-                        {this.detail.repo_user}
-                    </a-form-item>
-                    <a-form-item
-                    label='密码'
-                    labelCol={formItemLayout.labelCol}
-                    wrapperCol={formItemLayout.wrapperCol}>
-                        {this.detail.repo_pass ? '******': '未设置'}
                     </a-form-item>
                     <a-form-item
                     label='上线模式'
@@ -121,12 +103,6 @@ const ViewProject = {
                         { this.detail.deploy_path }
                     </a-form-item>
                     <a-divider></a-divider>
-                    <a-form-item
-                    label='历史版本保留数'
-                    labelCol={formItemLayout.labelCol}
-                    wrapperCol={formItemLayout.wrapperCol}>
-                        { this.detail.deploy_history }
-                    </a-form-item>
                     <a-form-item
                     label='pre_deploy'
                     labelCol={formItemLayout.labelCol}

@@ -6,4 +6,5 @@ export default {
     'CODE_ERR_DATA_REPEAT': 1003,
     'CODE_ERR_LOGIN_FAILED': 1004,
     'CODE_ERR_NO_PRIV': 1006,
+    'CODE_ERR_TASK_ERROR': 1007,
 }

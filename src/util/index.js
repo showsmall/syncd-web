@@ -69,4 +69,24 @@ export default {
     CheckPriv(code) {
         return this.$store.getters['account/getPriv'].indexOf(code) > -1
     },
+
+    CheckPrivs(codeArr) {
+        if (!codeArr || !codeArr.length) {
+            return false
+        }
+        let checked = false
+        codeArr.forEach(code => {
+            if (this.CheckPriv(code)) {
+                checked = true
+            }
+        })
+        return checked
+    },
+
+    T(lang) {
+        if (this.$root.Lang[lang]) {
+            return this.$root.Lang[lang]
+        }
+        return lang
+    },
 }

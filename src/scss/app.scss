@@ -1,3 +1,7 @@
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
 .app-layer-main {
     .app-layer-aside,.app-layer-body {
         min-height: 100vh;
@@ -148,6 +152,15 @@
 .app-color-gray {
     color: #999;
 }
+.app-line-through {
+    text-decoration: line-through;
+}
+.app-mt-10 {
+    margin-top: 10px;
+}
+.app-mt-20 {
+    margin-top: 20px;
+}
 .app-op {
     margin-right: 10px;
     &:last-child {
@@ -240,6 +253,38 @@
         color: #fff;
         a {
             margin: 0 5px;
+        }
+    }
+}
+.app-release {
+    .sp-title {
+        font-weight: 500;
+        width: 80px;
+        display: inline-block;
+    }
+    .app-server-groups {
+        padding: 0 20px;
+        margin-top: 20px;
+        h4 {
+            padding: 10px 5px;
+            background: #f7f7f7;
+        }
+    }
+    .shell {
+        background-color: rgba(40, 46,52, 1);
+        color: #b8c0cc;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        .shell-title {
+            color: #ffff91;
+        }
+        .shell-body {
+            margin-top: 20px;
+            height: 600px;
+            overflow: hidden;
+            overflow-y: auto;
         }
     }
 }

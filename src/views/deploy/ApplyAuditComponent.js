@@ -1,12 +1,14 @@
 import { Form } from 'ant-design-vue'
-import { getOperateLogApi } from '@/api/deploy.js'
-import LogComponent from '../component/Log.vue'
 const ViewApply = {
     render() {
+        const { getFieldDecorator, getFieldValue } = this.form
         const formItemLayout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 16 },
         }
+        getFieldDecorator('id', {
+            initialValue: this.detail.id,
+        })
         return (
             <a-form>
                 <a-form-item
@@ -49,30 +51,34 @@ const ViewApply = {
                 </a-form-item>
                 <a-form-item
                 {...{ props: formItemLayout }}
-                label='状态'>
-                    {this.applyStatusShow(this.detail.status)}
-                </a-form-item>
-                <a-form-item
-                {...{ props: formItemLayout }}
-                label='申请时间'>
-                    {this.$root.FormatDateTime(this.detail.ctime)}
-                </a-form-item>
-                <a-form-item
-                {...{ props: formItemLayout }}
                 label='申请人'>
-                    {this.detail.user_name} ({this.detail.user_email})
+                    {this.detail.user_name} ({this.detail.user_email}) - {this.$root.FormatDateTime(this.detail.ctime)}
                 </a-form-item>
-                <LogComponent log-data={this.operateLog}></LogComponent>
+                <a-form-item
+                {...{ props: formItemLayout }}
+                label='审核'>
+                    {getFieldDecorator('audit', {
+                        initialValue: 1,
+                    })(
+                        <a-radio-group>
+                            <a-radio value={1}><span class="app-color-success">审核通过</span></a-radio>
+                            <a-radio value={0}><span class="app-color-error">审核拒绝</span></a-radio>
+                        </a-radio-group>
+                    )}
+                </a-form-item>
+                {getFieldValue('audit') == 0 ? (
+                    <a-form-item
+                    {...{ props: formItemLayout }}
+                    label='拒绝原因'>
+                        {getFieldDecorator('reject_reason', {
+                            initialValue: '',
+                        })(
+                            <a-textarea placeholder="请输入拒绝原因" rows={3} />
+                        )}
+                    </a-form-item>
+                ) : ''}
             </a-form>
         )
-    },
-    data() {
-        return {
-            operateLog: [],
-        }
-    },
-    components: {
-        LogComponent,
     },
     props: {
         detail: {
@@ -83,41 +89,7 @@ const ViewApply = {
         },
     },
     methods: {
-        applyStatusShow(status) {
-            let tit = '未知'
-            switch (status) {
-                case 1:
-                    tit = '待审核'
-                    break
-                case 2:
-                    tit = '审核不通过'
-                    break
-                case 3:
-                    tit = '审核通过待上线'
-                    break
-                case 4:
-                    tit = '上线中'
-                    break
-                case 5:
-                    tit = '上线成功'
-                    break
-                case 6:
-                    tit = '上线失败'
-                    break
-                case 7:
-                    tit = '废弃'
-                    break
-            }
-            return tit
-        },
-        loadOperateLog() {
-            getOperateLogApi({id: this.detail.id}).then(res => {
-                this.operateLog = res.list
-            })
-        },
-    },
-    mounted() {
-        this.loadOperateLog()
+
     },
 }
 export default Form.create()(ViewApply)

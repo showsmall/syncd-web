@@ -47,7 +47,7 @@
         :destroyOnClose="true"
         width="50%"
         @cancel="dialogCancel">
-            <apply-update-component ref="updateRef" :space-id="spaceId" :project-id="projectId"></apply-update-component>
+            <apply-update-component ref="updateRef" :detail="{project_id: this.projectId}"></apply-update-component>
         </a-modal>
 
     </div>
@@ -78,18 +78,8 @@ export default {
             this.projectList = []
             this.selectedProjectId = undefined
         },
-        selectedProjectId(projectId) {
-
-        },
     },
     computed: {
-        spaceId() {
-            let spaceId = parseInt(this.selectedSpaceId)
-            if (isNaN(spaceId)) {
-                return 0
-            }
-            return spaceId
-        },
         projectId() {
             let spaceId = parseInt(this.selectedProjectId)
             if (isNaN(spaceId)) {
@@ -114,10 +104,13 @@ export default {
                         title: '提交成功',
                         okText: "确定",
                         content: (
-                            <div>恭喜，上线申请提交成功，点击确定返回上线单列表</div>
+                            <div>恭喜，上线申请提交成功</div>
                         ),
                         onOk: () => {
-                            this.$root.GotoRouter('deployDeploy')
+                            if (this.$root.CheckPrivs([this.$root.Priv.DEPLOY_VIEW_MY, this.$root.Priv.DEPLOY_VIEW_ALL])) {
+                                this.$root.GotoRouter('deployDeploy')
+                            }
+                            this.dialogCancel()
                         }
                     });
                 }).catch(err => {

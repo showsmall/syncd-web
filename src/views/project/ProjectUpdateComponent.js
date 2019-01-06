@@ -142,22 +142,7 @@ const UpdateProject = {
                     <a-divider></a-divider>
                     <a-form-item
                     {...{ props: formItemLayout }}
-                    label='代码仓库类型'>
-                        {getFieldDecorator('repo', {
-                            rules: [
-                                { required: true, message: '请选择代码仓库类型' },
-                            ],
-                            initialValue: this.detail.repo,
-                        })(
-                            <a-radio-group>
-                            <a-radio value='git'>Git</a-radio>
-                            <a-radio value='svn'>Svn</a-radio>
-                            </a-radio-group>
-                        )}
-                    </a-form-item>
-                    <a-form-item
-                    {...{ props: formItemLayout }}
-                    label='代码仓库地址'>
+                    label='Git仓库地址'>
                         {getFieldDecorator('repo_url', {
                             rules: [
                                 { required: true, message: '代码仓库地址不能为空' },
@@ -166,24 +151,6 @@ const UpdateProject = {
                             validateTrigger: 'blur',
                         })(
                             <a-input autocomplete="off" placeholder='请输入代码仓库地址' />
-                        )}
-                    </a-form-item>
-                    <a-form-item
-                    {...{ props: formItemSmallLayout }}
-                    label='用户名'>
-                        {getFieldDecorator('repo_user', {
-                            initialValue: this.detail.repo_user,
-                        })(
-                            <a-input autocomplete="off" placeholder='请输入用户名' />
-                        )}
-                    </a-form-item>
-                    <a-form-item
-                    {...{ props: formItemSmallLayout }}
-                    label='密码'>
-                        {getFieldDecorator('repo_pass', {
-                            initialValue: this.detail.repo_pass,
-                        })(
-                            <a-input type="password" autocomplete="off" placeholder='请输入密码' />
                         )}
                     </a-form-item>
                     <a-form-item
@@ -208,7 +175,7 @@ const UpdateProject = {
                         label='指定上线分支'>
                             {getFieldDecorator('repo_branch', {
                                 rules: [
-                                    { required: true, message: '请选择上线模式' },
+                                    { required: true, message: '请输入指定上线分支' },
                                 ],
                                 initialValue: this.detail.repo_branch,
                                 validateTrigger: 'blur',
@@ -217,6 +184,18 @@ const UpdateProject = {
                             )}
                         </a-form-item>
                     ) : ''}
+
+                    <a-form-item
+                    {...{ props: formItemLayout }}
+                    label='排除文件'>
+                        {getFieldDecorator('exclude_files', {
+                            initialValue: this.detail.exclude_files,
+                        })(
+                            <a-textarea placeholder="请输入要排除的文件" rows={3} />
+                        )}
+                        <div>排除不上线的文件，一行一个，支持通配符 `*`</div>
+                    </a-form-item>
+
                     <a-divider></a-divider>
                     <a-form-item
                     {...{ props: formItemLayout }}
@@ -265,20 +244,6 @@ const UpdateProject = {
                             validateTrigger: 'blur',
                         })(
                             <a-input autocomplete="off" placeholder='代码/包部署的目录' />
-                        )}
-                    </a-form-item>
-                    <a-form-item
-                    {...{ props: formItemLayout }}
-                    help='保留最近上线版本数, 回滚使用'
-                    label='历史版本保留数'>
-                        {getFieldDecorator('deploy_history', {
-                            initialValue: this.detail.deploy_history ? this.detail.deploy_history : 3,
-                            rules: [
-                                { required: true, message: '请设置历史版本保留数' },
-                            ],
-                            validateTrigger: 'blur',
-                        })(
-                            <a-input-number min={3} max={99} />
                         )}
                     </a-form-item>
                     <a-form-item

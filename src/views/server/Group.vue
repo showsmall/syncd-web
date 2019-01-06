@@ -6,7 +6,7 @@
             <div class="app-btn-group">
                 <a-row :gutter="10">
                     <a-col :span="4">
-                        <a-button @click="handleOpenAddGroupDialog" type="primary" icon="plus">新增集群</a-button>
+                        <a-button v-if="$root.CheckPriv($root.Priv.SERVER_GROUP_NEW)" @click="handleOpenAddGroupDialog" type="primary" icon="plus">新增集群</a-button>
                     </a-col>
                     <a-col :span="14"></a-col>
                     <a-col :span="6">
@@ -21,9 +21,9 @@
             @change="handleTableChange"
             :loading="tableLoading">
                 <span slot="op" slot-scope="text, record">
-                    <span @click="handleShowServerList(record.id)" class="app-link app-op"><a-icon type="bars" />服务器列表</span>
+                    <span v-if="$root.CheckPriv($root.Priv.SERVER_VIEW)" @click="handleShowServerList(record.id)" class="app-link app-op"><a-icon type="bars" />服务器列表</span>
                     <span v-if="$root.CheckPriv($root.Priv.SERVER_GROUP_EDIT)" @click="handleOpenEditGroupDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
-                    <a-popconfirm title="确定要删除此分组吗？" @confirm="handleDeleteGroup(record.id)" okText="删除" cancelText="取消">
+                    <a-popconfirm v-if="$root.CheckPriv($root.Priv.SERVER_GROUP_DEL)" title="确定要删除此分组吗？" @confirm="handleDeleteGroup(record.id)" okText="删除" cancelText="取消">
                         <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
                     </a-popconfirm>
                 </span>
@@ -120,7 +120,9 @@ export default {
                     renderServerList.push(
                         <div class="item">
                         <span style="display:inline-block; width: 50%">
-                            <icon-server /> {s.ip}:[{s.ssh_port}] <a class="op" target="_blank" href={link}>编辑</a>
+                            <icon-server /> {s.ip}:[{s.ssh_port}]
+                            {this.$root.CheckPriv(this.$root.Priv.SERVER_EDIT) ? (<a class="op" target="_blank" href={link}>编辑</a>) : ''}
+
                         </span>
                         <span style="display:inline-block; width: 50%">{s.name}</span></div>
                     )

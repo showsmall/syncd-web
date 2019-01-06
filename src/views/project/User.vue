@@ -4,35 +4,37 @@
         class="app-card"
         title="成员管理"
         :bordered="false">
-            <div class="app-btn-group">
-                <div style="margin-bottom: 15px;">添加新成员到 <strong>{{ this.spaceDetail.name }}</strong> 项目空间</div>
-                <a-row :gutter="10">
-                    <a-col :span="12">
-                        <a-select
-                        labelInValue
-                        showSearch
-                        allowClear
-                        :defaultActiveFirstOption="false"
-                        :showArrow="false"
-                        :filterOption="false"
-                        style="width:100%;"
-                        :notFoundContent="searchFetching ? undefined : '未找到用户'"
-                        placeholder="通过用户名、邮箱搜索用户"
-                        v-model="selectedUser"
-                        @search="handleSearchUser">
-                            <a-spin v-if="searchFetching" slot="notFoundContent" size="small"/>
-                            <a-select-option v-for="u in searchUserList"
-                            :value="`${u.id}`">
-                                {{ u.name }} - {{ u.email }} - {{u.group_name}}
-                            </a-select-option>
-                        </a-select>
-                    </a-col>
-                    <a-col :span="8">
-                        <a-button @click="handleAppendUser" type="primary">添加</a-button>
-                    </a-col>
-                </a-row>
-            </div>
-            <a-divider></a-divider>
+            <template v-if="$root.CheckPriv($root.Priv.PROJECT_USER_NEW)">
+                <div class="app-btn-group">
+                    <div style="margin-bottom: 15px;">添加新成员到 <strong>{{ this.spaceDetail.name }}</strong> 项目空间</div>
+                    <a-row :gutter="10">
+                        <a-col :span="12">
+                            <a-select
+                            labelInValue
+                            showSearch
+                            allowClear
+                            :defaultActiveFirstOption="false"
+                            :showArrow="false"
+                            :filterOption="false"
+                            style="width:100%;"
+                            :notFoundContent="searchFetching ? undefined : '未找到用户'"
+                            placeholder="通过用户名、邮箱搜索用户"
+                            v-model="selectedUser"
+                            @search="handleSearchUser">
+                                <a-spin v-if="searchFetching" slot="notFoundContent" size="small"/>
+                                <a-select-option v-for="u in searchUserList"
+                                :value="`${u.id}`">
+                                    {{ u.name }} - {{ u.email }} - {{u.group_name}}
+                                </a-select-option>
+                            </a-select>
+                        </a-col>
+                        <a-col :span="8">
+                            <a-button @click="handleAppendUser" type="primary">添加</a-button>
+                        </a-col>
+                    </a-row>
+                </div>
+                <a-divider></a-divider>
+            </template>
             <a-table
             :columns="tableColumns"
             :dataSource="tableSource"
@@ -58,7 +60,7 @@
                     </template>
                 </span>
                 <span slot="op" slot-scope="text, record">
-                    <a-popconfirm title="确定要移除吗？" @confirm="handleRemoveUser(record.id)" okText="移除" cancelText="取消">
+                    <a-popconfirm v-if="$root.CheckPriv($root.Priv.PROJECT_USER_DEL)" title="确定要移除吗？" @confirm="handleRemoveUser(record.id)" okText="移除" cancelText="取消">
                         <span class="app-link app-op app-remove"><a-icon type="delete" />移除</span>
                     </a-popconfirm>
                 </span>
@@ -157,7 +159,7 @@ export default {
     mounted() {
         let spaceId = parseInt(this.$route.query.space)
         if (!spaceId) {
-            this.$root.GotoRouter('p`rojectSpace')
+            this.$root.GotoRouter('projectSpace')
         }
         this.spaceId = spaceId
         this.getSpaceDetail(this.spaceId)

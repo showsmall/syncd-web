@@ -55,6 +55,10 @@ const GroupUpdate = {
                         rules: [
                             { required: true, message: '服务器IP不能为空' },
                             { validator: function(rule, value, callback) {
+                                if (!value) {
+                                    callback('请输入ip地址')
+                                    return
+                                }
                                 let arrIp = value.split('.')
                                 if (arrIp.length != 4) {
                                     callback('请输入有效ip地址')

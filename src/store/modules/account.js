@@ -14,6 +14,9 @@ const getters = {
     getUserName(state) {
         return state.name
     },
+    getUserId(state) {
+        return state.user_id
+    },
     getAvatar(state) {
         return 'https://www.gravatar.com/avatar/' + md5(state.email.toLowerCase()) + '?s=40'
     },

@@ -26,7 +26,10 @@ const UpdateApply = {
             return list
         }
         getFieldDecorator('project_id', {
-            initialValue: this.projectId,
+            initialValue: this.detail.project_id,
+        })
+        getFieldDecorator('id', {
+            initialValue: this.detail.id,
         })
         return (
             <a-form>
@@ -43,6 +46,7 @@ const UpdateApply = {
                             { required: true, message: '上线单名称不能为空' },
                         ],
                         validateTrigger: 'blur',
+                        initialValue: this.detail.name,
                     })(
                         <a-input autocomplete="off" placeholder='请输入上线单名称' />
                     )}
@@ -84,7 +88,16 @@ const UpdateApply = {
                                 {renderCommitListOpts()}
                             </a-select>
                             <a-button onClick={this.handleFetchCommitList}><a-icon type="sync" spin={this.fetching} /> { this.fetchBtnTitle }</a-button>
-                            <div style="line-height: 1; margin-top: 10px;">{ getFieldValue('commit') }</div>
+                            {
+                                getFieldValue('commit') ? (
+                                    <div style="line-height: 1; margin-top: 10px;">选择版本 - { getFieldValue('commit') }</div>
+                                ) : ''
+                            }
+                            { this.detail.repo_branch && this.detail.repo_commit ? (
+                                <div style="line-height: 1; margin-top: 10px;">
+                                    <p>当前版本 - {this.detail.repo_branch} - {this.detail.repo_commit}</p>
+                                </div>
+                            ): ''}
                         </div>
                     </a-form-item>
                 ) : ''}
@@ -117,6 +130,7 @@ const UpdateApply = {
                                 <a-button onClick={this.handleFetchTagList}><a-icon type="sync" spin={this.fetching} /> { this.fetchBtnTitle }</a-button>
                             </a-col>
                         </a-row>
+                        { this.detail.repo_tag != "" ?  (<div>{this.detail.repo_tag}</div>): '' }
                     </a-form-item>
                 ) : ''}
                 <a-form-item
@@ -128,6 +142,7 @@ const UpdateApply = {
                             { required: true, message: '请填写上线说明' },
                         ],
                         validateTrigger: 'blur',
+                        initialValue: this.detail.description,
                     })(
                         <a-textarea placeholder="请详细填写上线说明" rows={3} />
                     )}
@@ -136,8 +151,12 @@ const UpdateApply = {
         )
     },
     props: {
-        spaceId: Number,
-        projectId: Number,
+        detail: {
+            type: Object,
+            default: () => {
+                return {}
+            },
+        },
     },
     data() {
         return {
@@ -158,29 +177,43 @@ const UpdateApply = {
         handleFetchCommitList() {
             this.fetching = true
             this.fetchBtnTitle = '列表拉取中...'
-            getRepoCommitListApi({id: this.projectId}).then(res => {
+            getRepoCommitListApi({id: this.detail.project_id}).then(res => {
                 this.fetching = false
-                this.commitList = res.list
+                if (res.list) {
+                    this.commitList = res.list
+                }
                 this.fetchBtnTitle = '列表拉取成功'
             }).catch(err => {
                 this.fetching = false
                 this.fetchBtnTitle = '列表拉取失败'
+                this.$error({
+                    title: '列表拉取失败',
+                    content: err.message,
+                    okText: '知道了',
+                });
             })
         },
         handleFetchTagList() {
             this.fetching = true
             this.fetchBtnTitle = '列表拉取中...'
-            getRepoTagListApi({id: this.projectId}).then(res => {
+            getRepoTagListApi({id: this.detail.project_id}).then(res => {
                 this.fetching = false
-                this.tagList = res.list
+                if (res.list) {
+                    this.tagList = res.list
+                }
                 this.fetchBtnTitle = '列表拉取成功'
             }).catch(err => {
                 this.fetching = false
                 this.fetchBtnTitle = '列表拉取失败'
+                this.$error({
+                    title: '列表拉取失败',
+                    content: err.message,
+                    okText: '知道了',
+                });
             })
         },
         loadProjectDetail() {
-            getApplyProjectDetailApi({id: this.projectId}).then(res => {
+            getApplyProjectDetailApi({id: this.detail.project_id}).then(res => {
                 this.projectDetail = res
             })
         },

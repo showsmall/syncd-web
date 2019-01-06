@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Priv from '@/util/priv.js'
 
 Vue.use(Router)
 
@@ -47,7 +48,7 @@ const routerMap = [
                 name: 'deployApply',
                 meta: {
                     title: '提交上线申请',
-                    role: 1001,
+                    role: [Priv.DEPLOY_APPLY],
                 },
                 component: _import('deploy/Apply'),
             },
@@ -56,9 +57,19 @@ const routerMap = [
                 name: 'deployDeploy',
                 meta: {
                     title: '上线单管理',
-                    role: 1002,
+                    role: [Priv.DEPLOY_VIEW_MY, Priv.DEPLOY_VIEW_ALL],
                 },
                 component: _import('deploy/Deploy'),
+            },
+            {
+                path: 'release',
+                name: 'deployRelease',
+                meta: {
+                    title: '部署上线单',
+                    hide: true,
+                    role: [Priv.DEPLOY_DEPLOY_MY, Priv.DEPLOY_DEPLOY_ALL],
+                },
+                component: _import('deploy/Release'),
             },
         ],
     },
@@ -76,7 +87,7 @@ const routerMap = [
                 name: 'projectSpace',
                 meta: {
                     title: '项目空间',
-                    role: 2001,
+                    role: [Priv.PROJECT_SPACE_VIEW],
                 },
                 component: _import('project/Space'),
             },
@@ -86,7 +97,7 @@ const routerMap = [
                 meta: {
                     title: '项目管理',
                     hide: true,
-                    role: 2201,
+                    role: [Priv.PROJECT_VIEW],
                 },
                 component: _import('project/Project'),
             },
@@ -96,7 +107,7 @@ const routerMap = [
                 meta: {
                     title: '成员管理',
                     hide: true,
-                    role: 2100,
+                    role: [Priv.PROJECT_USER_VIEW],
                 },
                 component: _import('project/User'),
             },
@@ -116,7 +127,7 @@ const routerMap = [
                 name: 'userGroup',
                 meta: {
                     title: '角色管理',
-                    role: 3001,
+                    role: [Priv.USER_ROLE_VIEW],
                 },
                 component: _import('user/Group'),
             },
@@ -125,7 +136,7 @@ const routerMap = [
                 name: 'userList',
                 meta: {
                     title: '用户管理',
-                    role: 3101,
+                    role: [Priv.USER_VIEW],
                 },
                 component: _import('user/User'),
             },
@@ -145,7 +156,7 @@ const routerMap = [
                 name: 'serverGroup',
                 meta: {
                     title: '集群管理',
-                    role: 4001,
+                    role: [Priv.SERVER_GROUP_VIEW],
                 },
                 component: _import('server/Group'),
             },
@@ -154,7 +165,7 @@ const routerMap = [
                 name: 'serverList',
                 meta: {
                     title: '服务器管理',
-                    role: 4101,
+                    role: [Priv.SERVER_VIEW],
                 },
                 component: _import('server/Server'),
             },

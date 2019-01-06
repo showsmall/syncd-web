@@ -6,7 +6,7 @@
             <div class="app-btn-group">
                 <a-row :gutter="10">
                     <a-col :span="4">
-                        <a-button @click="handleOpenAddServerDialog" type="primary" icon="plus">新增服务器</a-button>
+                        <a-button v-if="$root.CheckPriv($root.Priv.SERVER_NEW)" @click="handleOpenAddServerDialog" type="primary" icon="plus">新增服务器</a-button>
                     </a-col>
                     <a-col :span="10"></a-col>
                     <a-col :span="4">
@@ -37,9 +37,8 @@
                     <span v-else>{{ text }}</span>
                 </template>
                 <span slot="op" slot-scope="text, record">
-                    <span class="app-link app-op"><icon-verify />检测</span>
-                    <span  @click="handleOpenEditServerDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
-                    <a-popconfirm title="确定要删除此服务器吗？" @confirm="handleDeleteServer(record.id)" okText="删除" cancelText="取消">
+                    <span v-if="$root.CheckPriv($root.Priv.SERVER_EDIT)" @click="handleOpenEditServerDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
+                    <a-popconfirm v-if="$root.CheckPriv($root.Priv.SERVER_DEL)" title="确定要删除此服务器吗？" @confirm="handleDeleteServer(record.id)" okText="删除" cancelText="取消">
                         <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
                     </a-popconfirm>
                 </span>

@@ -14,7 +14,7 @@
             <div class="app-btn-group">
                 <a-row :gutter="10">
                     <a-col :span="4">
-                        <a-button @click="handleOpenAddDialog" type="primary" icon="plus">新增项目</a-button>
+                        <a-button v-if="$root.CheckPriv($root.Priv.PROJECT_NEW)" @click="handleOpenAddDialog" type="primary" icon="plus">新增项目</a-button>
                     </a-col>
                     <a-col :span="14"></a-col>
                     <a-col :span="6">
@@ -33,28 +33,36 @@
                     <span v-else>Tag</span>
                 </template>
                 <template slot="status" slot-scope="text, record">
-                    <a-switch @click="handleProjectChange(record)" checkedChildren="启用" unCheckedChildren="未启用" v-model="record.status" />
+                    <template v-if="$root.CheckPriv($root.Priv.PROJECT_AUDIT)">
+                        <a-switch @click="handleProjectChange(record)" checkedChildren="启用" unCheckedChildren="未启用" v-model="record.status" />
+                    </template>
+                    <template v-else>
+                        {{record.status ? '已启用': '未启用'}}
+                    </template>
                 </template>
                 <template slot="need_audit" slot-scope="text">
                     <span v-if="text == 1">是</span>
                     <span v-else>否</span>
                 </template>
                 <span slot="op" slot-scope="text, record">
-                    <span @click="handleResetRepo(record.id)" class="app-link app-op"><a-icon type="scan" />仓库重置</span>
-                    <span @click="handleOpenViewDialog(record.id)" class="app-link app-op"><a-icon type="eye" />查看</span>
-                    <span @click="handleOpenUpdateDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
-                    <template v-if="record.status == 0">
-                        <a-popconfirm title="确定要删除此分组吗？" @confirm="handleDeleteProject(record.id)" okText="删除" cancelText="取消">
-                            <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
-                        </a-popconfirm>
-                    </template>
-                    <template v-else>
-                        <a-tooltip placement="topRight">
-                            <template slot="title">
-                                <span>删除项目前请先停用项目</span>
-                            </template>
-                            <span class="app-op app-color-gray app-no-allow"><a-icon type="delete" />删除</span>
-                        </a-tooltip>
+                    <span v-if="$root.CheckPriv($root.Priv.PROJECT_CHECK)" @click="handleCheck(record.id)" class="app-link app-op"><a-icon type="thunderbolt" />集群检测</span>
+                    <span v-if="$root.CheckPriv($root.Priv.PROJECT_REPO)" @click="handleResetRepo(record.id)" class="app-link app-op"><a-icon type="scan" />仓库重置</span>
+                    <span v-if="$root.CheckPriv($root.Priv.PROJECT_VIEW)" @click="handleOpenViewDialog(record.id)" class="app-link app-op"><a-icon type="eye" />查看</span>
+                    <span v-if="$root.CheckPriv($root.Priv.PROJECT_EDIT)" @click="handleOpenUpdateDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
+                    <template v-if="$root.CheckPriv($root.Priv.PROJECT_DEL)">
+                        <template v-if="record.status == 0">
+                            <a-popconfirm title="确定要删除此分组吗？" @confirm="handleDeleteProject(record.id)" okText="删除" cancelText="取消">
+                                <span class="app-link app-op app-remove"><a-icon type="delete" />删除</span>
+                            </a-popconfirm>
+                        </template>
+                        <template v-else>
+                            <a-tooltip placement="topRight">
+                                <template slot="title">
+                                    <span>删除项目前请先停用项目</span>
+                                </template>
+                                <span class="app-op app-color-gray app-no-allow"><a-icon type="delete" />删除</span>
+                            </a-tooltip>
+                        </template>
                     </template>
                 </span>
             </a-table>
@@ -86,7 +94,7 @@
 </template>
 
 <script>
-import { resetRepoApi, listProjectApi, deleteProjectApi, getSpaceDetailApi, changeProjectStatusApi } from '@/api/project.js'
+import { resetRepoApi, listProjectApi, deleteProjectApi, getSpaceDetailApi, changeProjectStatusApi, checkServerApi } from '@/api/project.js'
 import { getGroupMultiApi } from '@/api/server.js'
 import ProjectViewComponent from './ProjectViewComponent.js'
 import ProjectUpdateComponent from './ProjectUpdateComponent.js'
@@ -102,7 +110,7 @@ export default {
                 {dataIndex: "repo_mode", title: '上线方式', width: '10%', align: 'center', scopedSlots: { customRender: 'repo_mode' }},
                 {dataIndex: "need_audit", title: '开启审核', width: '10%', align: 'center', scopedSlots: { customRender: 'need_audit' }},
                 {dataIndex: "status", title: '项目启用', width: '10%', align: 'center', scopedSlots: { customRender: 'status' }},
-                {dataIndex: "op", title: '操作', width: '30%', align: 'right', scopedSlots: { customRender: 'op' }},
+                {dataIndex: "op", title: '操作', width: '35%', align: 'right', scopedSlots: { customRender: 'op' }},
             ],
             tableLoading: false,
             tableSource: [],
@@ -163,20 +171,93 @@ export default {
             })
         },
         handleResetRepo(id) {
-            const hideLoading = this.$message.loading('代码仓库重置中，请不要离开此页面...', 0);
+            const modal = this.$info({
+                title: '代码仓库重置',
+                content: (
+                    <div>
+                        代码仓库重置中，请不要离开此页面...
+                    </div>
+                ),
+                okText: '终止',
+                okType: 'default',
+                iconType: 'loading',
+                keyboard: false,
+                onOk: () => {
+                    this.$CancelAjaxRequet()
+                },
+            });
             resetRepoApi({id}).then(res => {
-                hideLoading()
-                setTimeout(() => {
-                    this.$message.success("代码仓库重置成功")
-                }, 500)
+                modal.destroy()
+                this.$success({
+                    title: '代码仓库重置成功',
+                    content: '代码仓库重置成功',
+                    okText: '知道了',
+                })
             }).catch(err => {
-                hideLoading()
-                this.$message.error("代码仓库重置失败")
+                modal.destroy()
+                this.$error({
+                    title: '代码仓库重置失败',
+                    content: err.message,
+                    okText: '知道了',
+                })
             })
         },
         closeUpdateDialog() {
             this.dialogUpdateVisible = false
             this.handleTableChange(this.pagination)
+        },
+        handleCheck(id) {
+            const modal = this.$info({
+                title: '集群连通性检测',
+                content: (
+                    <div>
+                        服务器集群连通性检测中，请不要刷新或离开页面...
+                    </div>
+                ),
+                okText: '终止检测',
+                okType: 'default',
+                iconType: 'loading',
+                keyboard: false,
+                onOk: () => {
+                    this.$CancelAjaxRequet()
+                },
+            });
+            checkServerApi({id}).then(res => {
+                modal.destroy()
+                let srvList = []
+                if (res.srv_list) {
+                    res.srv_list.forEach(srv => {
+                        srvList.push(
+                            <div>{srv.ip} - {srv.name}</div>
+                        )
+                    })
+                }
+                this.$success({
+                    title: '集群连通性检测成功',
+                    content: (
+                        <div>
+                            <h4>服务器列表</h4>
+                            <div>{srvList}</div>
+                        </div>
+                    ),
+                    okText: '知道了',
+                })
+            }).catch(err => {
+                modal.destroy()
+                if (this.$IsCancel(err)) {
+                    return
+                }
+                this.$error({
+                    title: '集群连通性检测失败',
+                    content: (
+                        <div>
+                            <h4>输出日志</h4>
+                            <pre>{err.message}</pre>
+                        </div>
+                    ),
+                    okText: '知道了',
+                })
+            })
         },
         getDataList(params) {
             this.tableLoading = true

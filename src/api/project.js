@@ -71,3 +71,7 @@ export function searchSpaceUserApi(data) {
 export function resetRepoApi(data) {
     return post('/project/repo/reset', data)
 }
+
+export function checkServerApi(params) {
+    return get('/project/server/check', params)
+}

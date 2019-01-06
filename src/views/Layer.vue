@@ -126,7 +126,7 @@ export default {
                 }
                 first.children.forEach(second => {
                     if (!second.meta.hide || this.$route.name == second.name) {
-                        if (second.meta.role && this.userPriv.indexOf(second.meta.role) == -1) {
+                        if (second.meta.role && !this.$root.CheckPrivs(second.meta.role)) {
                             return
                         }
                         item.children.push({

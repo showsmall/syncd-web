@@ -10,10 +10,11 @@ let CancelToken = axios.CancelToken
 let source = CancelToken.source()
 
 Vue.prototype.$CancelAjaxRequet = function() {}
+Vue.prototype.$IsCancel = axios.isCancel
 
 const service = axios.create({
     baseURL: API_URL + '/',
-    timeout: 30000,
+    timeout: 60000,
     withCredentials: true,
 });
 
