@@ -97,6 +97,16 @@
                         <a-menu slot="overlay" @click="handleMenuClick($event, record)">
                             <a-menu-item key="view"><a-icon type="eye" />查看</a-menu-item>
 
+                            <template v-if="
+                                $root.CheckPriv($root.Priv.DEPLOY_DEPLOY_ALL)
+                                || (
+                                    $root.CheckPriv($root.Priv.DEPLOY_DEPLOY_MY)
+                                    && record.user_id == $store.getters['account/getUserId']
+                                )">
+                                <a-menu-item key="deploy" v-if="record.status == 3 || record.status == 4"><a-icon type="coffee" />上线</a-menu-item>
+                                <a-menu-item key="deploy" v-if="record.status == 6 && $root.CheckPrivs([$root.Priv.DEPLOY_DEPLOY_MY, $root.Priv.DEPLOY_DEPLOY_ALL])"><a-icon type="coffee" />再次上线</a-menu-item>
+                            </template>
+
                             <template v-if="$root.CheckPriv($root.Priv.DEPLOY_EDIT_MY) && record.user_id == $store.getters['account/getUserId']">
                                 <a-menu-item key="edit" v-if="record.status == 1 || record.status == 2"><a-icon type="edit" />编辑</a-menu-item>
                             </template>
@@ -109,16 +119,6 @@
                                 )">
                                 <a-menu-item key="audit" v-if="record.status == 1"><a-icon type="audit" />审核</a-menu-item>
                                 <a-menu-item key="unaudit" v-if="record.status == 3"><a-icon type="close" />取消审核</a-menu-item>
-                            </template>
-
-                            <template v-if="
-                                $root.CheckPriv($root.Priv.DEPLOY_DEPLOY_ALL)
-                                || (
-                                    $root.CheckPriv($root.Priv.DEPLOY_DEPLOY_MY)
-                                    && record.user_id == $store.getters['account/getUserId']
-                                )">
-                                <a-menu-item key="deploy" v-if="record.status == 3"><a-icon type="coffee" />上线</a-menu-item>
-                                <a-menu-item key="deploy" v-if="record.status == 6 && $root.CheckPrivs([$root.Priv.DEPLOY_DEPLOY_MY, $root.Priv.DEPLOY_DEPLOY_ALL])"><a-icon type="coffee" />再次上线</a-menu-item>
                             </template>
 
                             <a-menu-item key="discard" v-if="

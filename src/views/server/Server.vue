@@ -34,7 +34,7 @@
             :loading="tableLoading">
                 <template slot="group_id" slot-scope="text, record">
                     <span v-if="groupList[text]">{{ groupList[text].name }}</span>
-                    <span v-else>{{ text }}</span>
+                    <span v-else><span class="app-line-through">已删除</span></span>
                 </template>
                 <span slot="op" slot-scope="text, record">
                     <span v-if="$root.CheckPriv($root.Priv.SERVER_EDIT)" @click="handleOpenEditServerDialog(record.id)" class="app-link app-op"><a-icon type="edit" />编辑</span>
@@ -196,7 +196,9 @@ export default {
         },
         getDataGroupList() {
             getGroupListApi({offset: 0, limit: 9999}).then(res => {
-                this.dialogGroupList = res.list
+                if (res.list) {
+                    this.dialogGroupList = res.list
+                }
             })
         },
     },

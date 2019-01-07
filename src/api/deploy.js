@@ -59,3 +59,11 @@ export function getOperateLogApi(params) {
 export function startDeployApi(data) {
     return post('/deploy/deploy/start', data)
 }
+
+export function statusDeployApi(params) {
+    return get('/deploy/deploy/status', params)
+}
+
+export function stopDeployApi(data) {
+    return post('/deploy/deploy/stop', data)
+}

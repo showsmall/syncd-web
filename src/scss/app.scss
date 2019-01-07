@@ -277,14 +277,17 @@ pre {
         border-radius: 4px;
         margin-top: 20px;
         margin-bottom: 20px;
+        height: 600px;
+        overflow: hidden;
+        overflow-y: auto;
         .shell-title {
             color: #ffff91;
         }
+        .shell-sub-title {
+            color: #fff;
+        }
         .shell-body {
-            margin-top: 20px;
-            height: 600px;
-            overflow: hidden;
-            overflow-y: auto;
+            margin-bottom: 15px;
         }
     }
 }
