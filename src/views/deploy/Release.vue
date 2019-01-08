@@ -34,13 +34,17 @@
                         <span v-else>等待上线...</span>
                     </template>
                 </div>
+                <div v-if="this.errorLog" class="shell-body app-color-error">
+                    Error Output >>>
+                    <pre>{{this.errorLog}}</pre>
+                </div>
                 <template v-for="d in deployList">
                     <div class="shell-sub-title">
                         <div>>>> {{ d.level == 4 ? '部署到> ' :''}}{{ $root.T(d.name) }}
-                        <a-icon v-if="d.status == 2" type="loading-3-quarters" spin/>
-                        <a-icon v-if="d.status == 3" type="check"/>
-                        <a-icon v-if="d.status == 4 || d.status == 5" type="warning"/>
-                    </div>
+                            <a-icon v-if="d.status == 2" type="loading-3-quarters" spin/>
+                            <a-icon v-if="d.status == 3" type="check"/>
+                            <a-icon v-if="d.status == 4 || d.status == 5" type="warning"/>
+                        </div>
                     </div>
                     <div class="shell-body">
                         <div v-if="d.status == 1 && stopingStatus">
@@ -81,6 +85,7 @@ export default {
             detail: {},
             loopStatus: null,
             applyStatus: 0,
+            errorLog: '',
             deployList: [],
         }
     },
@@ -122,6 +127,7 @@ export default {
             statusDeployApi({id: this.id}).then(res => {
                 this.applyStatus = res.apply_status
                 this.deployList = res.deploy_list
+                this.errorLog = res.error_log
                 if (this.applyStatus != 4 && !(this.stopingStatus && this.applyStatus == 6)) {
                     clearInterval(this.loopStatus)
                 }

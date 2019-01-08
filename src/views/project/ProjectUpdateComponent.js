@@ -6,11 +6,11 @@ const UpdateProject = {
         const { getFieldDecorator, getFieldValue, setFieldsValue } = this.form
         const formItemLayout = {
             labelCol: { span: 4 },
-            wrapperCol: { span: 14 },
+            wrapperCol: { span: 18 },
         }
         const formItemSmallLayout = {
             labelCol: { span: 4 },
-            wrapperCol: { span: 4 },
+            wrapperCol: { span: 6 },
         }
         const renderServerGroupOpts = () => {
             let list = []
@@ -180,7 +180,7 @@ const UpdateProject = {
                                 initialValue: this.detail.repo_branch,
                                 validateTrigger: 'blur',
                             })(
-                                <a-input autocomplete="off" placeholder='请输入指定上线分支' />
+                                <a-input autocomplete="off" placeholder='上线分支' />
                             )}
                         </a-form-item>
                     ) : ''}
@@ -248,20 +248,72 @@ const UpdateProject = {
                     </a-form-item>
                     <a-form-item
                     {...{ props: formItemLayout }}
-                    label='pre_deploy'>
+                    label='部署前运行命令'>
                         {getFieldDecorator('pre_deploy_cmd', {
                             initialValue: this.detail.pre_deploy_cmd
                         })(
-                            <a-input autocomplete="off" placeholder='代码部署之前运行的命令' />
+                            <a-textarea placeholder="代码部署之前运行的命令, 每行一个命令" rows={3} />
                         )}
                     </a-form-item>
                     <a-form-item
                     {...{ props: formItemLayout }}
-                    label='post_deploy'>
+                    label='部署后运行命令'>
                         {getFieldDecorator('post_deploy_cmd', {
                             initialValue: this.detail.post_deploy_cmd
                         })(
-                            <a-input autocomplete="off" placeholder='代码部署之后运行的命令' />
+                            <a-textarea placeholder="代码部署之后运行的命令, 每行一个命令" rows={3} />
+                        )}
+                    </a-form-item>
+                    <a-form-item
+                    {...{ props: formItemSmallLayout }}
+                    label='部署超时时间(秒)'>
+                        {getFieldDecorator('deploy_timeout', {
+                            rules: [
+                                { required: true, message: '请设置部署超时时间' },
+                                { validator: function(rule, value, callback) {
+                                    if (!value) {
+                                        callback()
+                                        return
+                                    }
+                                    let num = Number(value)
+                                    if (isNaN(num) || parseInt(num) != num) {
+                                        callback('请输入有效正整数')
+                                        return
+                                    }
+                                    if (num < 1) {
+                                        callback('请输入有效正整数')
+                                        return
+                                    }
+                                    callback()
+                                }},
+                            ],
+                            initialValue: this.detail.deploy_timeout ? this.detail.deploy_timeout: 120,
+                            validateTrigger: 'blur',
+                        })(
+                            <a-input autocomplete="off" placeholder='部署超时时间' />
+                        )}
+                    </a-form-item>
+                    <a-divider></a-divider>
+                    <a-form-item
+                    {...{ props: formItemLayout }}
+                    label='审核通知'>
+                        <div slot="help">用户提交待审核上线单时, 系统会通过邮件通知相关leader及时审核, 多个邮箱地址请用 `,` 相隔</div>
+                        {getFieldDecorator('audit_notice_email', {
+                            initialValue: this.detail.audit_notice_email,
+                            validateTrigger: 'blur',
+                        })(
+                            <a-input autocomplete="off" placeholder='请输入接收审核通知的邮箱地址' />
+                        )}
+                    </a-form-item>
+                    <a-form-item
+                    {...{ props: formItemLayout }}
+                    label='上线通知'>
+                        <div slot="help">接收上线通知的邮箱地址, 多个邮箱地址请用 `,` 相隔</div>
+                        {getFieldDecorator('deploy_notice_email', {
+                            initialValue: this.detail.deploy_notice_email,
+                            validateTrigger: 'blur',
+                        })(
+                            <a-input autocomplete="off" placeholder='请输入接收上线通知的邮箱地址' />
                         )}
                     </a-form-item>
                     <a-divider></a-divider>

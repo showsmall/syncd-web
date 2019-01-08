@@ -102,18 +102,36 @@ const ViewProject = {
                     wrapperCol={formItemLayout.wrapperCol}>
                         { this.detail.deploy_path }
                     </a-form-item>
-                    <a-divider></a-divider>
                     <a-form-item
-                    label='pre_deploy'
+                    label='部署前运行命令'
                     labelCol={formItemLayout.labelCol}
                     wrapperCol={formItemLayout.wrapperCol}>
-                        { this.detail.pre_deploy_cmd }
+                        <pre class="app-shell">{ this.detail.pre_deploy_cmd }</pre>
                     </a-form-item>
                     <a-form-item
-                    label='post_deploy'
+                    label='部署后运行命令'
                     labelCol={formItemLayout.labelCol}
                     wrapperCol={formItemLayout.wrapperCol}>
-                        { this.detail.post_deploy_cmd }
+                        <pre class="app-shell">{ this.detail.post_deploy_cmd }</pre>
+                    </a-form-item>
+                    <a-form-item
+                    label='部署超时时间(秒)'
+                    labelCol={formItemLayout.labelCol}
+                    wrapperCol={formItemLayout.wrapperCol}>
+                        { this.detail.deploy_timeout } 秒
+                    </a-form-item>
+                    <a-divider></a-divider>
+                    <a-form-item
+                    label='审核通知'
+                    labelCol={formItemLayout.labelCol}
+                    wrapperCol={formItemLayout.wrapperCol}>
+                        { this.detail.audit_notice_email }
+                    </a-form-item>
+                    <a-form-item
+                    label='上线通知'
+                    labelCol={formItemLayout.labelCol}
+                    wrapperCol={formItemLayout.wrapperCol}>
+                        { this.detail.deploy_notice_email }
                     </a-form-item>
                 </a-form>
             </a-spin>

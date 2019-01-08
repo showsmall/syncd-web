@@ -63,3 +63,11 @@ export function logoutApi() {
 export function loginStatusApi() {
     return get('/user/login/status')
 }
+
+export function updateMyApi(data) {
+    return post('/user/my/update', data)
+}
+
+export function updatePasswordApi(data) {
+    return post('/user/my/password', data)
+}

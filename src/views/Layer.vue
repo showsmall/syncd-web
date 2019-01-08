@@ -66,10 +66,10 @@
                                 <strong>{{ userName }}</strong>
                             </a-menu-item>
                             <a-menu-divider />
-                            <a-menu-item>
+                            <a-menu-item @click="handleOpenMySettingDialog">
                                 <span><icon-setting /> 个人设置</span>
                             </a-menu-item>
-                            <a-menu-item>
+                            <a-menu-item @click="dialogOpenPasswordDialog">
                                 <span><a-icon type="key" /> 修改密码</span>
                             </a-menu-item>
                             <a-menu-divider />
@@ -90,20 +90,51 @@
                     <router-view />
                 </div>
             </a-layout-content>
+
+            <a-modal
+            title="个人设置"
+            :visible="dialogMySettingVisible"
+            @ok="dialogSubmitMySetting"
+            okText="确定"
+            cancelText="取消"
+            :destroyOnClose="true"
+            @cancel="dialogCancelMySetting">
+                    <user-setting-component ref="mySettingRef"></user-setting-component>
+            </a-modal>
+
+            <a-modal
+            title="修改密码"
+            :visible="dialogPasswordVisible"
+            @ok="dialogSubmitPassword"
+            okText="确定"
+            cancelText="取消"
+            :destroyOnClose="true"
+            @cancel="dialogCancelPassword">
+                    <user-password-component ref="passwordRef"></user-password-component>
+            </a-modal>
+
         </a-layout>
     </a-layout>
 </template>
 
 <script>
 import { routerMap } from '@/router'
-import { loginStatusApi, logoutApi } from '@/api/user.js'
+import { loginStatusApi, logoutApi, updateMyApi, updatePasswordApi } from '@/api/user.js'
+import UserSettingComponent from './my/UserSettingComponent.js'
+import UserPasswordComponent from './my/UserPasswordComponent.js'
 export default {
+    components: {
+        UserSettingComponent, UserPasswordComponent,
+    },
     data(){
         return {
             collapsed: false,
             openKeys: [],
             selectedKeys: [],
             breadCrumb: [],
+
+            dialogMySettingVisible: false,
+            dialogPasswordVisible: false,
         }
     },
     computed: {
@@ -214,12 +245,59 @@ export default {
             this.menuSelect(this.$route.name)
             this.handleOpenChange(this.defaultOpenKeys)
         },
+
+        dialogOpenPasswordDialog() {
+            this.dialogPasswordVisible = true
+        },
+        dialogSubmitPassword() {
+            this.$refs.passwordRef.validateFields((err, values) => {
+                if (err) {
+                    return
+                }
+                let postData = {
+                    password: this.$root.Md5Sum(values.password),
+                    newpassword: this.$root.Md5Sum(values.newpassword),
+                }
+                updatePasswordApi(postData).then(res => {
+                    this.$message.success("密码修改成功, 需要重新登录", 1, () => {
+                        this.handleLogout()
+                    })
+                }).catch(err => {
+                    if (err.code == 1008) {
+                        this.$message.error("当前密码错误")
+                    }
+                })
+            })
+        },
+        dialogCancelPassword() {
+            this.dialogPasswordVisible = false
+        },
+
+        handleOpenMySettingDialog() {
+            this.dialogMySettingVisible = true
+        },
+        dialogSubmitMySetting() {
+            this.$refs.mySettingRef.validateFields((err, values) => {
+                if (err) {
+                    return
+                }
+                updateMyApi(values).then(res => {
+                    this.$message.success("个人信息更新成功", 1, () => {
+                        this.initLoginStatus()
+                        this.dialogCancelMySetting()
+                    })
+                })
+            })
+        },
+        dialogCancelMySetting() {
+            this.dialogMySettingVisible = false
+        },
         initLoginStatus() {
             loginStatusApi().then(res => {
                 if (!res.is_login) {
                     this.$root.GotoRouter('login')
                 } else {
-                    this.$store.dispatch('account/login', {user_id: res.user_id, name: res.name, email: res.email, priv: res.priv})
+                    this.$store.dispatch('account/login', {user_id: res.user_id, name: res.name, email: res.email, priv: res.priv, group_name: res.group_name, mobile: res.mobile, true_name: res.true_name})
                 }
             }).catch(err => {
                 this.$message.warning('用户未登录', 1)

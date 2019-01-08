@@ -2,8 +2,11 @@ import md5 from 'blueimp-md5'
 
 const state = {
     user_id: 0,
+    group_name: '',
     name: '',
     email: '',
+    mobile: '',
+    true_name: '',
     priv: [],
 }
 
@@ -22,7 +25,19 @@ const getters = {
     },
     getPriv(state) {
         return state.priv ? state.priv : []
-    }
+    },
+    getGroupName(state) {
+        return state.group_name
+    },
+    getMobile(state) {
+        return state.mobile
+    },
+    getTrueName(state) {
+        return state.true_name
+    },
+    getEmail(state) {
+        return state.email
+    },
 }
 
 const actions = {
@@ -32,6 +47,9 @@ const actions = {
             name: userInfo.name,
             email: userInfo.email,
             priv: userInfo.priv,
+            group_name: userInfo.group_name,
+            mobile: userInfo.mobile,
+            true_name: userInfo.true_name,
         })
     },
 }
@@ -42,6 +60,9 @@ const mutations = {
         state.name = userInfo.name
         state.email = userInfo.email
         state.priv = userInfo.priv
+        state.group_name = userInfo.group_name
+        state.mobile = userInfo.mobile
+        state.true_name = userInfo.true_name
     },
 }
 

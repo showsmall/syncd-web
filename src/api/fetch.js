@@ -43,6 +43,9 @@ service.interceptors.response.use(response => {
                 Vue.prototype.$message.error('无操作权限')
                 //Router.push({name: 'dashboard'})
                 break
+            case Code.CODE_ERR_NO_LOGIN:
+                Router.push({name: 'login'})
+                break
         }
         return Promise.reject(res)
     }
