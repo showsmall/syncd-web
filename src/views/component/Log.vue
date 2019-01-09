@@ -20,7 +20,13 @@
                     </a-tooltip>
                 </span>
                 <span slot="user" slot-scope="text, record">
-                    {{record.user_name}}(UID:{{record.user_id}})
+                    <template v-if="record.user_id">
+                        {{record.user_name}}(UID:{{record.user_id}})
+                    </template>
+                    <template v-else>
+                        robot
+                    </template>
+
                 </span>
                 <span slot="op_content" slot-scope="text, record">
                     <span>{{$root.T(record.op_name)}}</span>

@@ -1,5 +1,5 @@
 import { Form } from 'ant-design-vue'
-import { getOperateLogApi } from '@/api/deploy.js'
+import { getOperateLogApi, statusDeployApi } from '@/api/deploy.js'
 import LogComponent from '../component/Log.vue'
 const ViewApply = {
     render() {
