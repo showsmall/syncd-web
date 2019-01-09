@@ -301,3 +301,10 @@ pre {
         }
     }
 }
+.app-dashboard{
+    background: url('../assets/syncd.png') center center no-repeat;
+    .dashboard-container {
+        min-height: calc(100vh - 160px);
+        background: rgba(240, 242, 245, 0.9);
+    }
+}
