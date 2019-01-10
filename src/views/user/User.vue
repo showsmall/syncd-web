@@ -21,7 +21,13 @@
             @change="handleTableChange"
             :loading="tableLoading">
                 <span slot="last_login_time" slot-scope="text, record">
-                    {{$root.FormatDateFromNow(text)}}
+                    <a-tooltip placement="top">
+                        <template slot="title">
+                            <div>Time {{ $root.FormatDateTime(text) }}</div>
+                            <div>IP {{ record.last_login_ip }}</div>
+                        </template>
+                        {{$root.FormatDateFromNow(text)}}
+                    </a-tooltip>
                 </span>
                 <span slot="lock_status" slot-scope="text, record">
                     <template v-if="text == 1">
@@ -80,7 +86,7 @@ export default {
                 {dataIndex: "email", title: '邮箱'},
                 {dataIndex: "group_name", title: '角色', width: '15%'},
                 {dataIndex: "lock_status", title: '状态', width: '10%', scopedSlots: { customRender: 'lock_status' }},
-                {dataIndex: "last_login_time", title: '上次登录时间', width: '15%', scopedSlots: { customRender: 'last_login_time' }},
+                {dataIndex: "last_login_time", title: '上次登录', width: '15%', scopedSlots: { customRender: 'last_login_time' }},
                 {dataIndex: "op", title: '操作', width: '15%', align: 'right', scopedSlots: { customRender: 'op' }},
             ],
             tableSource: [],
