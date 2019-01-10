@@ -7,7 +7,8 @@
             v-model="collapsed"
             class="app-layer-aside">
             <div class="logo">
-                <span>~/.syncd</span>
+                <img v-if="collapsed" src="../assets/logo.png" class="small">
+                <img v-else src="../assets/logo.png" class="normal">
             </div>
             <a-menu
                 @select="handleMenuSelect"
@@ -88,6 +89,9 @@
                 </div>
                 <div class="app-layer-content-body">
                     <router-view />
+                    <div class="app-cpy">
+                        <p>©️ 2019 Syncd 版权所有, MIT License. <a href="https://github.com/dreamans/syncd" target="_blank"><a-icon type="github" /></a></p>
+                    </div>
                 </div>
             </a-layout-content>
 

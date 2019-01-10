@@ -42,9 +42,6 @@
                     <img class="logo" src="../assets/syncd.png" />
                 </div>
             </a-card>
-            <div class="cpy">
-                <p>©️ 2019 Syncd 版权所有, MIT License. <a href="https://github.com/dreamans/syncd" target="_blank"><a-icon type="github" /></a></p>
-            </div>
         </div>
     </div>
 </template>

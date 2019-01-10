@@ -11,14 +11,17 @@ pre {
         .logo {
             box-sizing: border-box;
             height: 55px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
             display: flex;
             justify-content: center;
             align-items: center;
             background: #303f9f;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            .normal {
+                width: 80px;
+            }
+            .small {
+                width: 60px;
+            }
         }
         .app-layer-menu {
             padding-top: 12px;
@@ -336,12 +339,12 @@ pre {
                 height: 136px;
             }
         }
-        .cpy {
-            margin: 20px 0;
-            color: #777;
-            a {
-                color: #777;
-            }
-        }
+    }
+}
+.app-cpy {
+    margin: 20px 0;
+    color: #777;
+    a {
+        color: #777;
     }
 }
