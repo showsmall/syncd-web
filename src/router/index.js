@@ -171,6 +171,7 @@ const routerMap = [
             },
         ],
     },
+    /*
     {
         path: '/ops',
         name: 'ops',
@@ -190,26 +191,7 @@ const routerMap = [
                 component: _import('ops/shell'),
             },
         ],
-    },
-    {
-        path: '/',
-        name: 'singleSetting',
-        component: _import('Layer'),
-        meta: {
-            single: true,
-        },
-        children: [
-            {
-                path: 'setting',
-                name: 'setting',
-                meta: {
-                    title: '设置',
-                    icon: 'icon-setting',
-                },
-                component: _import('Setting'),
-            },
-        ],
-    },
+    },*/
 ]
 
 const router = new Router({

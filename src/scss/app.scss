@@ -305,6 +305,30 @@ pre {
     background: url('../assets/syncd.png') center center no-repeat;
     .dashboard-container {
         min-height: calc(100vh - 160px);
-        background: rgba(240, 242, 245, 0.9);
+        background: rgba(240, 242, 245, 0.5);
+        .meta {
+            display: flex;
+            align-items:center;
+            .content {
+                margin-left: 20px;
+                font-weight: 500;
+                color: rgba(0,0,0,.85);
+            }
+        }
+        .quick-start {
+            margin-top: 20px;
+            .quick-item {
+                padding: 5px;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                &:hover {
+                    color: #1890ff;
+                }
+                .item-icon {
+                    margin-right: 3px;
+                }
+            }
+        }
     }
 }

@@ -21,7 +21,7 @@ const getters = {
         return state.user_id
     },
     getAvatar(state) {
-        return 'https://www.gravatar.com/avatar/' + md5(state.email.toLowerCase()) + '?s=40'
+        return 'https://www.gravatar.com/avatar/' + md5(state.email.toLowerCase()) + '?s=512'
     },
     getPriv(state) {
         return state.priv ? state.priv : []
